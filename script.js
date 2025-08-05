@@ -641,58 +641,50 @@ if (document.getElementById('converterValue')) {
         }
         
         
-        if (document.getElementById('fetchInstagram')) {
+if (document.getElementById('fetchInstagram')) {
     const fetchBtn = document.getElementById('fetchInstagram');
     const instagramUrl = document.getElementById('instagramUrl');
     const resultContainer = document.getElementById('instagramResult');
-    const previewImg = document.getElementById('instagramPreview');
-    const downloadBtns = document.querySelectorAll('.download-btn');
+    const previewArea = document.getElementById('previewArea');
     const loadingSpinner = document.getElementById('instagramLoading');
     const errorMessage = document.getElementById('instagramError');
+    const errorText = document.getElementById('errorText');
 
     fetchBtn.addEventListener('click', async () => {
         const url = instagramUrl.value.trim();
         
-        if (!url.includes('instagram.com')) {
-            showError('URL Instagram tidak valid');
+        
+        if (!url || !url.includes('instagram.com')) {
+            showError('Masukkan URL Instagram yang valid');
             return;
         }
 
         try {
-            loadingSpinner.style.display = 'block';
+            
+            loadingSpinner.style.display = 'flex';
             errorMessage.style.display = 'none';
             resultContainer.style.display = 'none';
+            previewArea.innerHTML = '';
 
+            
             const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
             const response = await fetch(apiUrl);
             
-            if (!response.ok) throw new Error('Gagal mengambil data');
+            if (!response.ok) {
+                throw new Error(`Gagal mengambil data (Status: ${response.status})`);
+            }
             
             const data = await response.json();
             
-            if (data.error) throw new Error(data.message || 'Konten tidak ditemukan');
             
-            // Tampilkan preview
-            previewImg.src = data.image || data.thumbnail || data.url;
+            if (!data || data.error) {
+                throw new Error(data?.message || 'Tidak dapat memproses URL ini');
+            }
+
             
-            // Set download links
-            downloadBtns.forEach(btn => {
-                const type = btn.dataset.type;
-                btn.onclick = () => {
-                    const downloadUrl = type === 'video' ? 
-                        (data.video || data.url) : 
-                        (data.image || data.url);
-                    
-                    if (!downloadUrl) {
-                        alert('Tipe konten ini tidak tersedia');
-                        return;
-                    }
-                    
-                    window.open(downloadUrl, '_blank');
-                };
-            });
-            
+            displayResults(data);
             resultContainer.style.display = 'block';
+            
         } catch (error) {
             showError(error.message);
         } finally {
@@ -700,13 +692,91 @@ if (document.getElementById('converterValue')) {
         }
     });
 
+    function displayResults(data) {
+        previewArea.innerHTML = '';
+        
+        
+        if (data.image || data.thumbnail) {
+            
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'media-container';
+            
+            const img = document.createElement('img');
+            img.src = data.image || data.thumbnail;
+            img.alt = 'Instagram Image';
+            img.className = 'media-preview';
+            
+            const downloadBtn = createDownloadButton(data.image || data.thumbnail, 'image');
+            
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(downloadBtn);
+            previewArea.appendChild(imgContainer);
+            
+        } else if (data.video) {
+            // Jika berupa video
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'media-container';
+            
+            const video = document.createElement('video');
+            video.src = data.video;
+            video.controls = true;
+            video.className = 'media-preview';
+            
+            const downloadBtn = createDownloadButton(data.video, 'video');
+            
+            videoContainer.appendChild(video);
+            videoContainer.appendChild(downloadBtn);
+            previewArea.appendChild(videoContainer);
+            
+        } else if (data.media && Array.isArray(data.media)) {
+            // Jika berupa carousel (multiple media)
+            data.media.forEach((media, index) => {
+                const mediaContainer = document.createElement('div');
+                mediaContainer.className = 'media-container';
+                
+                if (media.type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = media.url;
+                    img.alt = `Instagram Image ${index + 1}`;
+                    img.className = 'media-preview';
+                    mediaContainer.appendChild(img);
+                } else {
+                    const video = document.createElement('video');
+                    video.src = media.url;
+                    video.controls = true;
+                    video.className = 'media-preview';
+                    mediaContainer.appendChild(video);
+                }
+                
+                const downloadBtn = createDownloadButton(media.url, media.type);
+                mediaContainer.appendChild(downloadBtn);
+                previewArea.appendChild(mediaContainer);
+            });
+        } else {
+            throw new Error('Tidak menemukan media yang dapat diunduh');
+        }
+    }
+
+    function createDownloadButton(url, type) {
+        const btn = document.createElement('button');
+        btn.className = 'download-btn';
+        btn.innerHTML = `<i class="fas fa-download"></i> Download ${type === 'image' ? 'Gambar' : 'Video'}`;
+        
+        btn.addEventListener('click', () => {
+            
+            window.open(url, '_blank');
+        });
+        
+        return btn;
+    }
+
     function showError(message) {
+        errorText.textContent = message;
         errorMessage.style.display = 'flex';
-        document.getElementById('errorText').textContent = message;
+        resultContainer.style.display = 'none';
     }
 }
-        
-        // Click Game Tool
+      
         if (document.getElementById('startGameBtn')) {
             const startGameBtn = document.getElementById('startGameBtn');
             const gameArea = document.getElementById('clickGameArea');
@@ -735,7 +805,7 @@ if (document.getElementById('converterValue')) {
                 gameArea.innerHTML = '';
                 startGameBtn.disabled = true;
                 
-                // Start timer
+                
                 timer = setInterval(() => {
                     timeLeft--;
                     gameTime.textContent = timeLeft;
@@ -745,10 +815,10 @@ if (document.getElementById('converterValue')) {
                     }
                 }, 1000);
                 
-                // Start creating targets
+                
                 gameInterval = setInterval(createClickTarget, 1000);
                 
-                // Create first target immediately
+                
                 createClickTarget();
             }
             
@@ -758,7 +828,7 @@ if (document.getElementById('converterValue')) {
                 const target = document.createElement('div');
                 target.className = 'click-target';
                 
-                // Random position
+                
                 const maxWidth = gameArea.offsetWidth - 60;
                 const maxHeight = gameArea.offsetHeight - 60;
                 
@@ -768,21 +838,21 @@ if (document.getElementById('converterValue')) {
                 target.style.left = `${randomX}px`;
                 target.style.top = `${randomY}px`;
                 
-                // Random color
+                
                 const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
                 const randomColor = colors[Math.floor(Math.random() * colors.length)];
                 target.style.backgroundColor = randomColor;
                 
-                // Random size
+                
                 const randomSize = 40 + Math.floor(Math.random() * 40);
                 target.style.width = `${randomSize}px`;
                 target.style.height = `${randomSize}px`;
                 
-                // Add points value
+                
                 const points = Math.floor(randomSize / 10);
                 target.textContent = points;
                 
-                // Click event
+               
                 target.addEventListener('click', function() {
                     clickSound.currentTime = 0;
                     clickSound.play();
@@ -790,7 +860,7 @@ if (document.getElementById('converterValue')) {
                     score += points;
                     gameScore.textContent = score;
                     
-                    // Create explosion effect
+                    
                     const explosion = document.createElement('div');
                     explosion.className = 'explosion';
                     explosion.style.left = `${randomX - 20}px`;
@@ -800,7 +870,7 @@ if (document.getElementById('converterValue')) {
                     explosionSound.currentTime = 0;
                     explosionSound.play();
                     
-                    // Remove elements after animation
+                    
                     setTimeout(() => {
                         explosion.remove();
                     }, 500);
@@ -810,7 +880,7 @@ if (document.getElementById('converterValue')) {
                 
                 gameArea.appendChild(target);
                 
-                // Remove target after 1.5 seconds if not clicked
+                
                 setTimeout(() => {
                     if (gameArea.contains(target)) {
                         target.remove();
