@@ -274,37 +274,37 @@
     </div>
 </div>
 
-            
-            <div class="tool-container" id="instagramTool" style="display: none;">
+        <div class="tool-container" id="instagramTool" style="display: none;">
     <div class="container">
         <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
         <h2>Instagram Downloader</h2>
         <div class="instagram-downloader">
             <div class="input-group">
-                <input type="text" id="instagramUrl" placeholder="Masukkan URL posting Instagram (contoh: https://www.instagram.com/p/Cx7lV-2gGXK/)">
-                <button id="fetchInstagram" class="cta-button">Ambil Konten</button>
+                <input type="text" id="instagramUrl" placeholder="Contoh: https://www.instagram.com/p/Cx7lV-2gGXK/">
+                <button id="fetchInstagram" class="cta-button">Download</button>
             </div>
-            <div class="result-container" id="instagramResult" style="display: none;">
-                <div class="preview-area">
-                    <img id="instagramPreview" src="" alt="Preview">
-                </div>
-                <div class="download-options">
-                    <h3>Opsi Download</h3>
-                    <button class="download-btn" data-type="image"><i class="fas fa-image"></i> Gambar</button>
-                    <button class="download-btn" data-type="video"><i class="fas fa-video"></i> Video</button>
-                </div>
-            </div>
+            
             <div class="loading-spinner" id="instagramLoading" style="display: none;">
                 <div class="spinner"></div>
                 <p>Memproses...</p>
             </div>
+            
             <div class="error-message" id="instagramError" style="display: none;">
                 <i class="fas fa-exclamation-triangle"></i>
-                <p id="errorText">Gagal memproses URL</p>
+                <p id="errorText"></p>
+            </div>
+            
+            <div class="result-container" id="instagramResult" style="display: none;">
+                <div class="preview-container">
+                    <div class="preview-area" id="previewArea">
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</div>    
+            
             <div class="tool-container" id="clickgameTool" style="display: none;">
                 <div class="container">
                     <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
