@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-   
+   window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+    const loader = document.querySelector('.loading-animation');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 500);
+    }
+});
     setTimeout(() => {
         document.querySelector('.loading-animation').style.opacity = '0';
         setTimeout(() => {
