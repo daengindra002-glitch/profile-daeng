@@ -61,6 +61,114 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    document.getElementById('fetchInstagram').addEventListener('click', async () => {
+    const url = document.getElementById('instagramUrl').value.trim();
+    
+    if (!url.includes('instagram.com')) {
+        showError('Masukkan URL Instagram yang valid');
+        return;
+    }
+
+    showLoading();
+    hideError();
+    hideResults();
+
+    try {
+        // Coba API utama dulu
+        let data = await fetchInstagramData(url);
+        
+        // Jika tidak ada media, coba alternatif
+        if (!data.image && !data.video && !data.media) {
+            data = await fetchAlternativeAPI(url);
+        }
+        
+        displayResults(data);
+    } catch (error) {
+        showError(`Gagal memuat: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+});
+
+// Fungsi bantuan
+function showLoading() {
+    document.getElementById('instagramLoading').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('instagramLoading').style.display = 'none';
+}
+
+function showError(message) {
+    const errorElement = document.getElementById('instagramError');
+    document.getElementById('errorText').textContent = message;
+    errorElement.style.display = 'flex';
+}
+
+function hideError() {
+    document.getElementById('instagramError').style.display = 'none';
+}
+
+function hideResults() {
+    document.getElementById('instagramResult').style.display = 'none';
+    document.getElementById('previewArea').innerHTML = '';
+}
+
+function displayResults(data) {
+    const previewArea = document.getElementById('previewArea');
+    previewArea.innerHTML = '';
+
+    if (data.image) {
+        previewArea.innerHTML = `
+            <div class="media-container">
+                <img src="${data.image}" class="media-preview">
+                <button class="download-btn" onclick="downloadMedia('${data.image}', 'image')">
+                    <i class="fas fa-download"></i> Download Gambar
+                </button>
+            </div>
+        `;
+    } else if (data.video) {
+        previewArea.innerHTML = `
+            <div class="media-container">
+                <video controls class="media-preview">
+                    <source src="${data.video}" type="video/mp4">
+                </video>
+                <button class="download-btn" onclick="downloadMedia('${data.video}', 'video')">
+                    <i class="fas fa-download"></i> Download Video
+                </button>
+            </div>
+        `;
+    } else if (data.media && data.media.length > 0) {
+        data.media.forEach(media => {
+            const mediaElement = media.type === 'image' ? 
+                `<img src="${media.url}" class="media-preview">` : 
+                `<video controls class="media-preview"><source src="${media.url}" type="video/mp4"></video>`;
+            
+            previewArea.innerHTML += `
+                <div class="media-container">
+                    ${mediaElement}
+                    <button class="download-btn" onclick="downloadMedia('${media.url}', '${media.type}')">
+                        <i class="fas fa-download"></i> Download ${media.type === 'image' ? 'Gambar' : 'Video'}
+                    </button>
+                </div>
+            `;
+        });
+    } else {
+        throw new Error('Tidak menemukan media yang dapat diunduh');
+    }
+
+    document.getElementById('instagramResult').style.display = 'block';
+}
+
+function downloadMedia(url, type) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `instagram-${Date.now()}.${type === 'image' ? 'jpg' : 'mp4'}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
     
     if (document.getElementById('gameArea')) {
         const gameArea = document.getElementById('gameArea');
