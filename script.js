@@ -106,52 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (el) el.style.display = 'none';
         }
 
-       async function fetchInstagramData(url) {
-    try {
-        const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
-        const response = await fetch(apiUrl);
-        
-        if (!response.ok) {
-            throw new Error(`Gagal mengambil data (Status: ${response.status})`);
-        }
-        
-        const data = await response.json();
-        
-        // Validasi response minimal
-        if (!data || typeof data !== 'object') {
-            throw new Error('Format response tidak valid');
-        }
-        
-        return data;
-    } catch (error) {
-        console.error('Error fetchInstagramData:', error);
-        throw error; // Re-throw agar bisa ditangkap oleh caller
-    }
-}
-
-// Fungsi fallback jika API utama gagal
-async function fetchAlternativeAPI(url) {
-    try {
-        // Contoh alternatif lain (gunakan salah satu):
-        // 1. API alternatif
-        const response = await fetch(`https://api.example-backup.com/instagram?url=${encodeURIComponent(url)}`);
-        
-        // 2. Web scraping sederhana (via proxy)
-        // const response = await fetch(`https://insta-scraper.proxy/?url=${encodeURIComponent(url)}`);
-        
-        if (!response.ok) throw new Error('Backup API gagal');
-        
-        const data = await response.json();
-        return {
-            image: data.thumbnail_url || data.image,
-            video: data.video_url || null
-        };
-    } catch (error) {
-        console.error('Error fetchAlternativeAPI:', error);
-        throw new Error('Semua metode download gagal');
-    }
-}
-
        
         document.getElementById('fetchInstagram')?.addEventListener('click', async () => {
     const urlInput = document.getElementById('instagramUrl');
