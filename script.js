@@ -341,119 +341,184 @@ if (document.getElementById('converterValue')) {
 }
 
     if (document.getElementById('imageUpload')) {
-    const imageUpload = document.getElementById('imageUpload');
-    const canvas = document.getElementById('imageCanvas');
-    const ctx = canvas.getContext('2d');
+    const uploadInput = document.getElementById('imageUpload');
+    const uploadArea = document.querySelector('.upload-area');
+    const previewImage = document.getElementById('previewImage');
     const colorGrid = document.getElementById('colorGrid');
-    const selectedColorBox = document.getElementById('selectedColorBox');
-    const hexValue = document.getElementById('hexValue');
-    const rgbValue = document.getElementById('rgbValue');
-    const copyBtn = document.getElementById('copyColor');
-    const colorResults = document.getElementById('colorResults');
-
-    imageUpload.addEventListener('change', handleImageUpload);
-
-    function handleImageUpload(e) {
+    const selectedColorDisplay = document.getElementById('selectedColor');
+    const colorBox = document.getElementById('colorBox');
+    const colorValue = document.getElementById('colorValue');
+    const copyBtn = document.getElementById('copyBtn');
+    
+    let selectedColor = null;
+    let colorPalette = [];
+    
+    // Handle image upload
+    uploadInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
-
+        
+        if (!file.type.match('image.*')) {
+            alert('Please select an image file');
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-                extractColors();
+            previewImage.src = event.target.result;
+            previewImage.style.display = 'block';
+            uploadArea.style.display = 'none';
+            
+            // Process image for color extraction
+            previewImage.onload = function() {
+                extractColorsFromImage(previewImage);
             };
-            img.src = event.target.result;
         };
         reader.readAsDataURL(file);
-    }
-
-    function extractColors() {
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        const colorMap = {};
+    });
+    
+    // Drag and drop functionality
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function() {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        uploadInput.files = e.dataTransfer.files;
+        uploadInput.dispatchEvent(new Event('change'));
+    });
+    
+    // Extract colors from image
+    function extractColorsFromImage(img) {
+        colorGrid.innerHTML = '';
+        colorPalette = [];
         
+        // Create canvas to process image
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
         
-        for (let i = 0; i < imageData.length; i += 16 * 4) {
-            const r = imageData[i];
-            const g = imageData[i + 1];
-            const b = imageData[i + 2];
+        // Sample pixels from the image
+        const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        const colorCount = {};
+        
+        // Analyze pixels and count color occurrences
+        for (let i = 0; i < pixelData.length; i += 4) {
+            const r = pixelData[i];
+            const g = pixelData[i + 1];
+            const b = pixelData[i + 2];
+            const a = pixelData[i + 3];
+            
+            // Skip transparent pixels
+            if (a < 128) continue;
+            
             const hex = rgbToHex(r, g, b);
             
-            if (!colorMap[hex]) {
-                colorMap[hex] = { r, g, b, count: 1 };
+            // Group similar colors
+            const similarColor = findSimilarColor(hex, colorCount);
+            if (similarColor) {
+                colorCount[similarColor]++;
             } else {
-                colorMap[hex].count++;
+                colorCount[hex] = 1;
             }
         }
         
+        // Sort colors by frequency and get top 12
+        const sortedColors = Object.entries(colorCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 12)
+            .map(item => item[0]);
         
-        const colors = Object.values(colorMap)
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 12); 
-        
-        displayColors(colors);
-    }
-
-    function displayColors(colors) {
-        colorGrid.innerHTML = '';
-        colors.forEach(color => {
-            const hex = rgbToHex(color.r, color.g, color.b);
-            const colorElement = document.createElement('div');
-            colorElement.className = 'color-item';
-            colorElement.style.backgroundColor = hex;
-            colorElement.dataset.hex = hex;
-            colorElement.dataset.rgb = `rgb(${color.r}, ${color.g}, ${color.b})`;
+        // Display color palette
+        sortedColors.forEach((color, index) => {
+            const colorItem = document.createElement('div');
+            colorItem.className = 'color-item';
+            colorItem.style.backgroundColor = color;
+            colorItem.title = color;
+            colorItem.dataset.color = color;
             
-            colorElement.addEventListener('click', function() {
-                selectColor(this);
+            colorItem.addEventListener('click', function() {
+                selectColor(color);
             });
             
-            colorGrid.appendChild(colorElement);
+            colorGrid.appendChild(colorItem);
+            colorPalette.push(color);
         });
         
-       
-        if (colors.length > 0) {
-            selectColor(colorGrid.firstChild);
+        // Select the first color by default
+        if (colorPalette.length > 0) {
+            selectColor(colorPalette[0]);
         }
-        
-        colorResults.style.display = 'block';
     }
-
-    function selectColor(element) {
-        const hex = element.dataset.hex;
-        const rgb = element.dataset.rgb;
-        
-        selectedColorBox.style.backgroundColor = hex;
-        hexValue.textContent = hex;
-        rgbValue.textContent = rgb;
-        
     
+    // Select a color from the palette
+    function selectColor(color) {
+        selectedColor = color;
+        colorBox.style.backgroundColor = color;
+        colorValue.textContent = color;
+        
+        // Highlight selected color in grid
         document.querySelectorAll('.color-item').forEach(item => {
-            item.classList.remove('selected');
+            item.classList.toggle('selected', item.dataset.color === color);
         });
-        element.classList.add('selected');
     }
-
+    
+    // Copy color to clipboard
+    copyBtn.addEventListener('click', function() {
+        if (!selectedColor) return;
+        
+        navigator.clipboard.writeText(selectedColor).then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy Color';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+        });
+    });
+    
+    // Helper functions
     function rgbToHex(r, g, b) {
         return '#' + [r, g, b].map(x => {
             const hex = x.toString(16);
             return hex.length === 1 ? '0' + hex : hex;
         }).join('');
     }
-
-    copyBtn.addEventListener('click', function() {
-        navigator.clipboard.writeText(hexValue.textContent)
-            .then(() => {
-                copyBtn.textContent = 'Tersalin!';
-                setTimeout(() => {
-                    copyBtn.textContent = 'Salin HEX';
-                }, 2000);
-            });
-    });
-}
+    
+    function findSimilarColor(hex, colorCount) {
+        const threshold = 30; // Color similarity threshold
+        const [r1, g1, b1] = hexToRgb(hex);
+        
+        for (const color in colorCount) {
+            const [r2, g2, b2] = hexToRgb(color);
+            const diff = Math.sqrt(
+                Math.pow(r1 - r2, 2) + 
+                Math.pow(g1 - g2, 2) + 
+                Math.pow(b1 - b2, 2)
+            );
+            
+            if (diff < threshold) {
+                return color;
+            }
+        }
+        return null;
+    }
+    
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return [r, g, b];
+    }
+});
 
     
     if (document.getElementById('danaPayment')) {
