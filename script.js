@@ -641,121 +641,56 @@ if (document.getElementById('converterValue')) {
         }
         
         
-if (document.getElementById('fetchInstagram')) {
-    const fetchBtn = document.getElementById('fetchInstagram');
-    const instagramUrl = document.getElementById('instagramUrl');
-    const resultContainer = document.getElementById('instagramResult');
-    const previewArea = document.getElementById('previewArea');
-    const loadingSpinner = document.getElementById('instagramLoading');
-    const errorMessage = document.getElementById('instagramError');
-    const errorText = document.getElementById('errorText');
-
-    fetchBtn.addEventListener('click', async () => {
-        const url = instagramUrl.value.trim();
+async function fetchInstagramData(url) {
+    // Gunakan proxy jika API utama gagal
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+    const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
+    
+    try {
+        const response = await fetch(proxyUrl + apiUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
         
-        
-        if (!url || !url.includes('instagram.com')) {
-            showError('Masukkan URL Instagram yang valid');
-            return;
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error("Error with proxy:", error);
+        // Fallback ke API alternatif
+        return await fetchAlternativeAPI(url);
+    }
+}
 
+async function fetchAlternativeAPI(url) {
+    // API alternatif 1
+    try {
+        const res = await fetch(`https://api.instagram.com/oembed/?url=${encodeURIComponent(url)}`);
+        if (!res.ok) throw new Error("Alternative API failed");
+        const data = await res.json();
+        return { thumbnail: data.thumbnail_url };
+    } catch (error) {
+        console.error("Error with alternative API:", error);
+        // API alternatif 2
         try {
-            
-            loadingSpinner.style.display = 'flex';
-            errorMessage.style.display = 'none';
-            resultContainer.style.display = 'none';
-            previewArea.innerHTML = '';
-
-            
-            const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
-            const response = await fetch(apiUrl);
-            
-            if (!response.ok) {
-                throw new Error(`Gagal mengambil data (Status: ${response.status})`);
-            }
-            
-            const data = await response.json();
-            
-            
-            if (!data || data.error) {
-                throw new Error(data?.message || 'Tidak dapat memproses URL ini');
-            }
-
-            
-            displayResults(data);
-            resultContainer.style.display = 'block';
-            
-        } catch (error) {
-            showError(error.message);
-        } finally {
-            loadingSpinner.style.display = 'none';
-        }
-    });
-
-    function displayResults(data) {
-        previewArea.innerHTML = '';
-        
-        
-        if (data.image || data.thumbnail) {
-            
-            const imgContainer = document.createElement('div');
-            imgContainer.className = 'media-container';
-            
-            const img = document.createElement('img');
-            img.src = data.image || data.thumbnail;
-            img.alt = 'Instagram Image';
-            img.className = 'media-preview';
-            
-            const downloadBtn = createDownloadButton(data.image || data.thumbnail, 'image');
-            
-            imgContainer.appendChild(img);
-            imgContainer.appendChild(downloadBtn);
-            previewArea.appendChild(imgContainer);
-            
-        } else if (data.video) {
-            // Jika berupa video
-            const videoContainer = document.createElement('div');
-            videoContainer.className = 'media-container';
-            
-            const video = document.createElement('video');
-            video.src = data.video;
-            video.controls = true;
-            video.className = 'media-preview';
-            
-            const downloadBtn = createDownloadButton(data.video, 'video');
-            
-            videoContainer.appendChild(video);
-            videoContainer.appendChild(downloadBtn);
-            previewArea.appendChild(videoContainer);
-            
-        } else if (data.media && Array.isArray(data.media)) {
-            // Jika berupa carousel (multiple media)
-            data.media.forEach((media, index) => {
-                const mediaContainer = document.createElement('div');
-                mediaContainer.className = 'media-container';
-                
-                if (media.type === 'image') {
-                    const img = document.createElement('img');
-                    img.src = media.url;
-                    img.alt = `Instagram Image ${index + 1}`;
-                    img.className = 'media-preview';
-                    mediaContainer.appendChild(img);
-                } else {
-                    const video = document.createElement('video');
-                    video.src = media.url;
-                    video.controls = true;
-                    video.className = 'media-preview';
-                    mediaContainer.appendChild(video);
-                }
-                
-                const downloadBtn = createDownloadButton(media.url, media.type);
-                mediaContainer.appendChild(downloadBtn);
-                previewArea.appendChild(mediaContainer);
-            });
-        } else {
-            throw new Error('Tidak menemukan media yang dapat diunduh');
+            const res = await fetch(`https://www.instagram.com/graphql/query/?query_hash=2b0673e0dc4580674a88d426fe00ea90&variables={"shortcode":"${getShortcode(url)}"}`);
+            const data = await res.json();
+            const media = data.data.shortcode_media;
+            return {
+                image: media.display_url,
+                video: media.is_video ? media.video_url : null
+            };
+        } catch (err) {
+            throw new Error("All APIs failed");
         }
     }
+}
+
+function getShortcode(url) {
+    const regex = /instagram\.com\/p\/([^\/]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
 
     function createDownloadButton(url, type) {
         const btn = document.createElement('button');
