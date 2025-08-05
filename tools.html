@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools | Profil Saya 2025</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="loading-animation">
+        <div class="loader"></div>
+    </div>
+
+    <header class="animated-header">
+        <div class="container">
+            <div class="logo-school">
+                <img src="https://www.smkn1ngabang.sch.id/images/logo_smkn_1_ngabang.png" alt="Logo Sekolah" class="school-logo">
+                <h1>SMK 1 Ngabang</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Beranda</a></li>
+                    <li><a href="tools.html" class="active"><i class="fas fa-tools"></i> Tools</a></li>
+                    <li><a href="donate.html"><i class="fas fa-heart"></i> Donasi</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="tools-hero animated-section">
+            <div class="container">
+                <h1 class="animated-text">Koleksi Tools</h1>
+                <p class="subtitle">Berbagai alat bantu yang dapat Anda gunakan secara gratis</p>
+            </div>
+        </section>
+
+        <section class="tools-categories animated-section">
+            <div class="container">
+                <div class="category-buttons">
+                    <button class="category-btn active" data-category="all">Semua</button>
+                    <button class="category-btn" data-category="web">Web Tools</button>
+                    <button class="category-btn" data-category="media">Media</button>
+                    <button class="category-btn" data-category="game">Game</button>
+                    <button class="category-btn" data-category="utility">Utility</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="tools-list animated-section">
+            <div class="container">
+                <div class="tools-grid">
+                    
+                    <div class="tool-card" data-category="utility">
+                        <div class="tool-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <h3>Password Generator</h3>
+                        <p>Buat password acak yang kuat dan aman</p>
+                        <button class="cta-button tool-btn" data-tool="password">Buka Tool</button>
+                    </div>
+
+                    
+                    <div class="tool-card" data-category="media">
+                        <div class="tool-icon">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <h3>Instagram Downloader</h3>
+                        <p>Unduh foto/video Instagram dalam kualitas HD</p>
+                        <button class="cta-button tool-btn" data-tool="instagram">Buka Tool</button>
+                    </div>
+
+                    
+                    <div class="tool-card" data-category="game">
+                        <div class="tool-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>Click Explosion Game</h3>
+                        <p>Game klik objek dengan efek ledakan</p>
+                        <button class="cta-button tool-btn" data-tool="clickgame">Buka Tool</button>
+                    </div>
+
+                    
+                    <div class="tool-card" data-category="web">
+                        <div class="tool-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3>Color Picker</h3>
+                        <p>Pilih dan ekstrak warna dari gambar</p>
+                        <button class="cta-button tool-btn" data-tool="color">Buka Tool</button>
+                    </div>
+
+                    
+                    <div class="tool-card" data-category="utility">
+                        <div class="tool-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3>Unit Converter</h3>
+                        <p>Konversi berbagai satuan pengukuran</p>
+                        <button class="cta-button tool-btn" data-tool="converter">Buka Tool</button>
+                    </div>
+
+                    
+                    <div class="tool-card" data-category="web">
+                        <div class="tool-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <h3>Text Editor</h3>
+                        <p>Editor teks online dengan berbagai fitur</p>
+                        <button class="cta-button tool-btn" data-tool="editor">Buka Tool</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+      
+        <div id="toolContainers">
+            
+            <div class="tool-container" id="passwordTool" style="display: none;">
+                <div class="container">
+                    <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+                    <h2>Password Generator</h2>
+                    <div class="password-generator">
+                        <div class="password-display">
+                            <input type="text" id="generatedPassword" readonly>
+                            <button id="copyPassword"><i class="far fa-copy"></i></button>
+                        </div>
+                        <div class="password-options">
+                            <div class="option">
+                                <label for="passwordLength">Panjang Password:</label>
+                                <input type="range" id="passwordLength" min="6" max="32" value="12">
+                                <span id="lengthValue">12</span>
+                            </div>
+                            <div class="option">
+                                <input type="checkbox" id="uppercase" checked>
+                                <label for="uppercase">Huruf Besar (A-Z)</label>
+                            </div>
+                            <div class="option">
+                                <input type="checkbox" id="lowercase" checked>
+                                <label for="lowercase">Huruf Kecil (a-z)</label>
+                            </div>
+                            <div class="option">
+                                <input type="checkbox" id="numbers" checked>
+                                <label for="numbers">Angka (0-9)</label>
+                            </div>
+                            <div class="option">
+                                <input type="checkbox" id="symbols">
+                                <label for="symbols">Simbol (!@#$%^&*)</label>
+                            </div>
+                        </div>
+                        <button id="generatePassword" class="cta-button">Generate Password</button>
+                        <div class="password-strength">
+                            <p>Kekuatan Password: <span id="strengthText">Sedang</span></p>
+                            <div class="strength-meter">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-container" id="editorTool" style="display: none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>Text Editor</h2>
+        <div class="text-editor">
+            <div class="editor-toolbar">
+                <button data-command="bold"><i class="fas fa-bold"></i></button>
+                <button data-command="italic"><i class="fas fa-italic"></i></button>
+                <button data-command="underline"><i class="fas fa-underline"></i></button>
+                <select data-command="fontSize">
+                    <option value="1">Small</option>
+                    <option value="3" selected>Normal</option>
+                    <option value="5">Large</option>
+                    <option value="7">Huge</option>
+                </select>
+                <select data-command="fontName">
+                    <option value="Arial">Arial</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Verdana">Verdana</option>
+                </select>
+                <button data-command="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+                <button data-command="insertOrderedList"><i class="fas fa-list-ol"></i></button>
+                <button data-command="createLink"><i class="fas fa-link"></i></button>
+                <button data-command="undo"><i class="fas fa-undo"></i></button>
+                <button data-command="redo"><i class="fas fa-redo"></i></button>
+            </div>
+            <div class="editor-content" id="editorContent" contenteditable="true">
+                <p>Ketik di sini...</p>
+            </div>
+            <div class="editor-actions">
+                <button id="clearEditor" class="cta-button">Bersihkan</button>
+                <button id="saveEditor" class="cta-button">Simpan sebagai HTML</button>
+                <button id="copyEditor" class="cta-button">Salin Teks</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+            <div class="tool-container" id="converterTool" style="display: none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>Unit Converter</h2>
+        <div class="unit-converter">
+            <div class="converter-controls">
+                <div class="input-group">
+                    <input type="number" id="converterValue" placeholder="Masukkan nilai">
+                    <select id="converterFrom">
+                        <option value="cm">Centimeter (cm)</option>
+                        <option value="m">Meter (m)</option>
+                        <option value="km">Kilometer (km)</option>
+                        <option value="in">Inch (in)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="mi">Mile (mi)</option>
+                    </select>
+                </div>
+                <div class="converter-arrow">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="converterResult" placeholder="Hasil" readonly>
+                    <select id="converterTo">
+                        <option value="cm">Centimeter (cm)</option>
+                        <option value="m">Meter (m)</option>
+                        <option value="km">Kilometer (km)</option>
+                        <option value="in">Inch (in)</option>
+                        <option value="ft">Feet (ft)</option>
+                        <option value="mi">Mile (mi)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="converter-categories">
+                <button class="category-btn active" data-category="length">Panjang</button>
+                <button class="category-btn" data-category="weight">Berat</button>
+                <button class="category-btn" data-category="temperature">Suhu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <div class="tool-container" id="colorTool" style="display: none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>Color Picker</h2>
+        <div class="color-picker-tool">
+            <div class="upload-area">
+                <input type="file" id="imageUpload" accept="image/*">
+                <label for="imageUpload" class="upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Unggah Gambar atau Tarik ke sini</p>
+                </label>
+                <canvas id="imageCanvas" style="display: none;"></canvas>
+            </div>
+            <div class="color-results" id="colorResults" style="display: none;">
+                <h3>Warna yang Diekstrak:</h3>
+                <div class="color-grid" id="colorGrid"></div>
+                <div class="selected-color">
+                    <div class="color-box" id="selectedColorBox"></div>
+                    <div class="color-info">
+                        <p>HEX: <span id="hexValue">#000000</span></p>
+                        <p>RGB: <span id="rgbValue">rgb(0, 0, 0)</span></p>
+                        <button id="copyColor" class="copy-btn">Salin HEX</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            <div class="tool-container" id="instagramTool" style="display: none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>Instagram Downloader</h2>
+        <div class="instagram-downloader">
+            <div class="input-group">
+                <input type="text" id="instagramUrl" placeholder="Masukkan URL posting Instagram (contoh: https://www.instagram.com/p/Cx7lV-2gGXK/)">
+                <button id="fetchInstagram" class="cta-button">Ambil Konten</button>
+            </div>
+            <div class="result-container" id="instagramResult" style="display: none;">
+                <div class="preview-area">
+                    <img id="instagramPreview" src="" alt="Preview">
+                </div>
+                <div class="download-options">
+                    <h3>Opsi Download</h3>
+                    <button class="download-btn" data-type="image"><i class="fas fa-image"></i> Gambar</button>
+                    <button class="download-btn" data-type="video"><i class="fas fa-video"></i> Video</button>
+                </div>
+            </div>
+            <div class="loading-spinner" id="instagramLoading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Memproses...</p>
+            </div>
+            <div class="error-message" id="instagramError" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p id="errorText">Gagal memproses URL</p>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="tool-container" id="clickgameTool" style="display: none;">
+                <div class="container">
+                    <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+                    <h2>Click Explosion Game</h2>
+                    <div class="click-game">
+                        <div class="game-header">
+                            <div class="game-stats">
+                                <span>Score: <span id="gameScore">0</span></span>
+                                <span>Time: <span id="gameTime">60</span>s</span>
+                            </div>
+                            <button id="startGameBtn" class="cta-button">Mulai Game</button>
+                        </div>
+                        <div class="game-area" id="clickGameArea">
+                            <p>Klik "Mulai Game" untuk memulai!</p>
+                        </div>
+                        <div class="game-instructions">
+                            <h3>Instruksi:</h3>
+                            <p>Klik objek yang muncul secepat mungkin sebelum menghilang. Setiap klik yang berhasil akan menambah skor Anda!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Tentang Tools</h3>
+                    <p>Koleksi alat bantu yang dikembangkan untuk mempermudah aktivitas digital Anda</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kontak</h3>
+                    <p><i class="fas fa-envelope"></i> daengauliaramadiansyah@gmail.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Link Cepat</h3>
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="tools.html">Tools</a></li>
+                        <li><a href="donate.html">Donasi</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Daeng Aulia Ramadiansyah.</p>
+        </div>
+    </footer>
+
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="explosionSound" src="https://assets.mixkit.co/sfx/preview/mixkit-explosion-impact-1684.mp3"></audio>
+    <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

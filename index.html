@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya | 2025</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="loading-animation">
+        <div class="loader"></div>
+    </div>
+
+    <header class="animated-header">
+        <div class="container">
+            <div class="logo-school">
+                <img src="https://www.smkn1ngabang.sch.id/images/logo_smkn_1_ngabang.png" alt="Logo Sekolah" class="school-logo">
+                <h1>SMK 1 Ngabang</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Beranda</a></li>
+                    <li><a href="tools.html"><i class="fas fa-tools"></i> Tools</a></li>
+                    <li><a href="donate.html"><i class="fas fa-heart"></i> Donasi</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+ 
+    <main>
+        <section class="hero animated-section">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h2 class="animated-text">Halo, Saya  <span class="highlight">   Daeng Aulia Ramadiansyah</span></h2>
+                        <p class="subtitle"> Siswa Jurusan <span class="highlight"> Teknik Sepeda Motor</span></p>
+                        <div class="social-icons">
+                            <a href="https://www.instagram.com/siengszz?igsh=MWhhcDl3cnZmMDIwbg==" class="social-icon"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                        <a href="#about" class="cta-button pulse">Pelajari Tentang Saya</a>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://i.top4top.io/p_35047yxke1.jpg" alt="pro" class="profile-pic">
+                        <div class="decoration-circle"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about animated-section">
+            <div class="container">
+                <h2>Tentang Saya</h2>
+                <div class="about-content">
+                    <div class="about-card">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>Pendidikan</h3>
+                        <p>Siswa SMK 1 Ngabang, Jurusan Teknik Sepeda Motor</p>
+                    </div>
+                    <div class="about-card">
+                        <i class="fas fa-laptop-code"></i>
+                        <h3>Keahlian</h3>
+                        <p>Pengembangan Web, Desain UI/UX, Pemrograman JavaScript (masih dalam tahap belajar)</p>
+                    </div>
+                    <div class="about-card">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Prestasi</h3>
+                        <p>Tidak ada :v</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mini-game animated-section">
+            <div class="container">
+                <h2>Game Sederhana</h2>
+                <p>Coba klik objek yang muncul untuk mendapatkan poin!</p>
+                <div class="game-container">
+                    <div class="game-score">
+                        <span>Poin: </span><span id="score">0</span>
+                    </div>
+                    <div class="game-area" id="gameArea"></div>
+                    <button id="startGame" class="cta-button">Mulai Game</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Tentang Sekolah</h3>
+                    <img src="https://www.smkn1ngabang.sch.id/images/logo_smkn_1_ngabang.png" alt="Logo Sekolah" class="footer-logo">
+                    <p>SMK 1 Ngabang - SMK BISA SMK HEBAT!</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kontak</h3>
+                    <p><i class="fas fa-envelope"></i> daengauliaramadiansyah@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +62 15 4561 7637</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Link Cepat</h3>
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="tools.html">Tools</a></li>
+                        <li><a href="donate.html">Donasi</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Daeng Aulia Ramadiansyah.</p>
+        </div>
+    </footer>
+
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="explosionSound" src="https://assets.mixkit.co/sfx/preview/mixkit-explosion-impact-1684.mp3"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
