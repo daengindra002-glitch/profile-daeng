@@ -106,58 +106,147 @@ document.addEventListener('DOMContentLoaded', function() {
             if (el) el.style.display = 'none';
         }
 
+       async function fetchInstagramData(url) {
+    try {
+        const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`Gagal mengambil data (Status: ${response.status})`);
+        }
+        
+        const data = await response.json();
+        
+        // Validasi response minimal
+        if (!data || typeof data !== 'object') {
+            throw new Error('Format response tidak valid');
+        }
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetchInstagramData:', error);
+        throw error; // Re-throw agar bisa ditangkap oleh caller
+    }
+}
+
+// Fungsi fallback jika API utama gagal
+async function fetchAlternativeAPI(url) {
+    try {
+        // Contoh alternatif lain (gunakan salah satu):
+        // 1. API alternatif
+        const response = await fetch(`https://api.example-backup.com/instagram?url=${encodeURIComponent(url)}`);
+        
+        // 2. Web scraping sederhana (via proxy)
+        // const response = await fetch(`https://insta-scraper.proxy/?url=${encodeURIComponent(url)}`);
+        
+        if (!response.ok) throw new Error('Backup API gagal');
+        
+        const data = await response.json();
+        return {
+            image: data.thumbnail_url || data.image,
+            video: data.video_url || null
+        };
+    } catch (error) {
+        console.error('Error fetchAlternativeAPI:', error);
+        throw new Error('Semua metode download gagal');
+    }
+}
+
        
-        document.getElementById('fetchInstagram').addEventListener('click', async () => {
-            const url = document.getElementById('instagramUrl').value.trim();
-            
-            if (!url.includes('instagram.com')) {
-                showError('Masukkan URL Instagram yang valid');
-                return;
-            }
-
-            showLoading();
-            hideError();
-            hideResults();
-
-            try {
-                let data = await fetchInstagramData(url);
-                if (!data || (!data.image && !data.video && !data.media)) {
-                    data = await fetchAlternativeAPI(url);
-                }
-                
-                if (data) {
-                    displayResults(data);
-                } else {
-                    throw new Error('Tidak dapat memproses URL ini');
-                }
-            } catch (error) {
-                showError(`Gagal memuat: ${error.message}`);
-            } finally {
-                hideLoading();
-            }
-        });
-    }
-
-   
-    if (document.getElementById('gameArea')) {
-      
-    }
-
-    if (document.getElementById('editorContent')) {
-
-    }
-
-   
-    if (document.getElementById('converterValue')) {
-       
-    }
-
-  
-    if (document.getElementById('imageUpload')) {
-    }
-
+        document.getElementById('fetchInstagram')?.addEventListener('click', async () => {
+    const urlInput = document.getElementById('instagramUrl');
+    const resultContainer = document.getElementById('instagramResult');
+    const previewArea = document.getElementById('previewArea');
+    const loadingSpinner = document.getElementById('instagramLoading');
+    const errorElement = document.getElementById('instagramError');
     
-    if (document.getElementById('danaPayment')) {
-       
+    if (!urlInput || !resultContainer || !previewArea) return;
+
+    const url = urlInput.value.trim();
+    
+    // Validasi dasar URL
+    if (!url || !url.includes('instagram.com')) {
+        showError('Masukkan URL Instagram yang valid (contoh: https://www.instagram.com/p/ABC123/)');
+        return;
+    }
+
+    // Tampilkan loading
+    if (loadingSpinner) loadingSpinner.style.display = 'flex';
+    if (errorElement) errorElement.style.display = 'none';
+    previewArea.innerHTML = '';
+    
+    try {
+        // Coba API utama
+        let data = await fetchInstagramData(url);
+        
+        // Fallback jika data tidak lengkap
+        if (!data.image && !data.video) {
+            data = await fetchAlternativeAPI(url);
+        }
+        
+        // Tampilkan hasil
+        if (data.image || data.video) {
+            displayMedia(data);
+            resultContainer.style.display = 'block';
+        } else {
+            throw new Error('Tidak menemukan media yang dapat diunduh');
+        }
+    } catch (error) {
+        console.error('Download error:', error);
+        showError(`Gagal: ${error.message || 'Coba lagi nanti'}`);
+    } finally {
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
     }
 });
+
+// Fungsi untuk menampilkan media
+function displayMedia(data) {
+    const previewArea = document.getElementById('previewArea');
+    if (!previewArea) return;
+
+    previewArea.innerHTML = '';
+
+    if (data.video) {
+        previewArea.innerHTML = `
+            <div class="media-container">
+                <video controls class="media-preview">
+                    <source src="${data.video}" type="video/mp4">
+                    Browser tidak mendukung video
+                </video>
+                <button class="download-btn" onclick="downloadFile('${data.video}', 'video')">
+                    <i class="fas fa-download"></i> Download Video
+                </button>
+            </div>
+        `;
+    } else if (data.image) {
+        previewArea.innerHTML = `
+            <div class="media-container">
+                <img src="${data.image}" class="media-preview" alt="Preview Instagram">
+                <button class="download-btn" onclick="downloadFile('${data.image}', 'image')">
+                    <i class="fas fa-download"></i> Download Gambar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Fungsi download umum
+function downloadFile(url, type) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `instagram-${Date.now()}.${type === 'video' ? 'mp4' : 'jpg'}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Fungsi tampilkan error
+function showError(message) {
+    const errorElement = document.getElementById('instagramError');
+    const errorText = document.getElementById('errorText');
+    
+    if (errorElement && errorText) {
+        errorText.textContent = message;
+        errorElement.style.display = 'flex';
+    }
+}
