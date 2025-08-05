@@ -1,32 +1,42 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
+    // Loading Animation
     setTimeout(() => {
-        document.querySelector('.loading-animation').style.opacity = '0';
-        setTimeout(() => {
-            document.querySelector('.loading-animation').style.display = 'none';
-        }, 500);
+        const loader = document.querySelector('.loading-animation');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }
     }, 1000);
 
-   
+    // Mobile Menu Toggle
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('nav');
     
-    menuToggle.addEventListener('click', () => {
-        nav.classList.toggle('active');
-        menuToggle.querySelector('i').classList.toggle('fa-bars');
-        menuToggle.querySelector('i').classList.toggle('fa-times');
-    });
-
-    
-    document.querySelectorAll('nav ul li a').forEach(link => {
-        link.addEventListener('click', () => {
-            nav.classList.remove('active');
-            menuToggle.querySelector('i').classList.remove('fa-times');
-            menuToggle.querySelector('i').classList.add('fa-bars');
+    if (menuToggle && nav) {
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            }
         });
-    });
 
-    
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+    }
+
+    // Scroll Animations
     const animateOnScroll = () => {
         const sections = document.querySelectorAll('.animated-section');
         
@@ -40,13 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    
+    // Initialize animations
     animateOnScroll();
-    
-    
     window.addEventListener('scroll', animateOnScroll);
 
-    
+    // Animated Text Effect
     const animatedTexts = document.querySelectorAll('.animated-text');
     
     animatedTexts.forEach(text => {
@@ -61,8 +69,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    
-    if (document.getElementById('gameArea')) {
+    // Initialize all tool functionalities
+    initGame();
+    initEditor();
+    initConverter();
+    initColorPicker();
+    initDanaPayment();
+    initToolNavigation();
+    initPasswordGenerator();
+    initInstagramDownloader();
+    initClickGame();
+
+    // Game Functionality
+    function initGame() {
+        if (!document.getElementById('gameArea')) return;
+
         const gameArea = document.getElementById('gameArea');
         const startGameBtn = document.getElementById('startGame');
         const scoreElement = document.getElementById('score');
@@ -90,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = document.createElement('div');
             target.className = 'target';
             
-            
             const maxWidth = gameArea.offsetWidth - 50;
             const maxHeight = gameArea.offsetHeight - 50;
             
@@ -100,28 +120,23 @@ document.addEventListener('DOMContentLoaded', function() {
             target.style.left = `${randomX}px`;
             target.style.top = `${randomY}px`;
             
-            
             const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             target.style.backgroundColor = randomColor;
-            
             
             const randomSize = 30 + Math.floor(Math.random() * 30);
             target.style.width = `${randomSize}px`;
             target.style.height = `${randomSize}px`;
             
-            
             const points = Math.floor(randomSize / 10);
             target.textContent = points;
             
-            
             target.addEventListener('click', function() {
-                clickSound.currentTime = 0;
+                if (!clickSound.paused) clickSound.currentTime = 0;
                 clickSound.play();
                 
                 score += points;
                 scoreElement.textContent = score;
-                
                 
                 const explosion = document.createElement('div');
                 explosion.className = 'explosion';
@@ -129,9 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 explosion.style.top = `${randomY - 20}px`;
                 gameArea.appendChild(explosion);
                 
-                explosionSound.currentTime = 0;
+                if (!explosionSound.paused) explosionSound.currentTime = 0;
                 explosionSound.play();
-                
                 
                 setTimeout(() => {
                     explosion.remove();
@@ -139,12 +153,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 target.remove();
                 
-                
                 setTimeout(createTarget, 500);
             });
             
             gameArea.appendChild(target);
-            
             
             setTimeout(() => {
                 if (gameArea.contains(target)) {
@@ -155,373 +167,357 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    
-if (document.getElementById('editorContent')) {
-    const editorContent = document.getElementById('editorContent');
-    const toolbarButtons = document.querySelectorAll('.editor-toolbar button');
-    const toolbarSelects = document.querySelectorAll('.editor-toolbar select');
-    const clearBtn = document.getElementById('clearEditor');
-    const saveBtn = document.getElementById('saveEditor');
-    const copyBtn = document.getElementById('copyEditor');
+    // Text Editor Functionality
+    function initEditor() {
+        if (!document.getElementById('editorContent')) return;
 
-   
-    toolbarButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const command = this.dataset.command;
+        const editorContent = document.getElementById('editorContent');
+        const toolbarButtons = document.querySelectorAll('.editor-toolbar button');
+        const toolbarSelects = document.querySelectorAll('.editor-toolbar select');
+        const clearBtn = document.getElementById('clearEditor');
+        const saveBtn = document.getElementById('saveEditor');
+        const copyBtn = document.getElementById('copyEditor');
+
+        toolbarButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const command = this.dataset.command;
+                
+                if (command === 'createLink') {
+                    const url = prompt('Masukkan URL:');
+                    if (url) document.execCommand(command, false, url);
+                } else {
+                    document.execCommand(command, false, null);
+                }
+                
+                editorContent.focus();
+            });
+        });
+
+        toolbarSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                document.execCommand(this.dataset.command, false, this.value);
+                editorContent.focus();
+            });
+        });
+
+        clearBtn.addEventListener('click', function() {
+            editorContent.innerHTML = '<p>Ketik di sini...</p>';
+        });
+
+        saveBtn.addEventListener('click', function() {
+            const html = editorContent.innerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
             
-            if (command === 'createLink') {
-                const url = prompt('Masukkan URL:');
-                if (url) document.execCommand(command, false, url);
-            } else {
-                document.execCommand(command, false, null);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'document.html';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        });
+
+        copyBtn.addEventListener('click', function() {
+            const range = document.createRange();
+            range.selectNode(editorContent);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            
+            copyBtn.textContent = 'Tersalin!';
+            setTimeout(() => {
+                copyBtn.textContent = 'Salin Teks';
+            }, 2000);
+        });
+
+        editorContent.addEventListener('click', function() {
+            if (this.textContent === 'Ketik di sini...') {
+                this.innerHTML = '<p></p>';
             }
-            
-            editorContent.focus();
         });
-    });
-
-    toolbarSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            document.execCommand(this.dataset.command, false, this.value);
-            editorContent.focus();
-        });
-    });
-
-    
-    clearBtn.addEventListener('click', function() {
-        editorContent.innerHTML = '<p>Ketik di sini...</p>';
-    });
-
-    saveBtn.addEventListener('click', function() {
-        const html = editorContent.innerHTML;
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'document.html';
-        a.click();
-        
-        URL.revokeObjectURL(url);
-    });
-
-    copyBtn.addEventListener('click', function() {
-        const range = document.createRange();
-        range.selectNode(editorContent);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        document.execCommand('copy');
-        window.getSelection().removeAllRanges();
-        
-        copyBtn.textContent = 'Tersalin!';
-        setTimeout(() => {
-            copyBtn.textContent = 'Salin Teks';
-        }, 2000);
-    });
-
-    
-    editorContent.addEventListener('click', function() {
-        if (this.textContent === 'Ketik di sini...') {
-            this.innerHTML = '<p></p>';
-        }
-    });
-}
-
-if (document.getElementById('converterValue')) {
-    const converterValue = document.getElementById('converterValue');
-    const converterFrom = document.getElementById('converterFrom');
-    const converterTo = document.getElementById('converterTo');
-    const converterResult = document.getElementById('converterResult');
-    const categoryBtns = document.querySelectorAll('.converter-categories .category-btn');
-
-    
-    const conversionRates = {
-        length: {
-            cm: 1,
-            m: 100,
-            km: 100000,
-            in: 2.54,
-            ft: 30.48,
-            mi: 160934
-        },
-        weight: {
-            g: 1,
-            kg: 1000,
-            oz: 28.35,
-            lb: 453.592,
-            ton: 1000000
-        },
-        temperature: {
-            c: { formula: (v, to) => to === 'f' ? (v * 9/5) + 32 : v + 273.15 },
-            f: { formula: (v, to) => to === 'c' ? (v - 32) * 5/9 : (v - 32) * 5/9 + 273.15 },
-            k: { formula: (v, to) => to === 'c' ? v - 273.15 : (v - 273.15) * 9/5 + 32 }
-        }
-    };
-
-    let currentCategory = 'length';
-
-    
-    function updateUnits() {
-        const units = Object.keys(conversionRates[currentCategory]);
-        const fromValue = converterFrom.value;
-        const toValue = converterTo.value;
-        
-        converterFrom.innerHTML = units.map(unit => 
-            `<option value="${unit}">${getUnitName(unit)}</option>`
-        ).join('');
-        
-        converterTo.innerHTML = units.map(unit => 
-            `<option value="${unit}">${getUnitName(unit)}</option>`
-        ).join('');
-        
-       
-        if (units.includes(fromValue)) converterFrom.value = fromValue;
-        if (units.includes(toValue)) converterTo.value = toValue;
-        
-        convert();
     }
 
-    function getUnitName(unit) {
-        const names = {
-            cm: 'Centimeter (cm)',
-            m: 'Meter (m)',
-            km: 'Kilometer (km)',
-            in: 'Inch (in)',
-            ft: 'Feet (ft)',
-            mi: 'Mile (mi)',
-            g: 'Gram (g)',
-            kg: 'Kilogram (kg)',
-            oz: 'Ounce (oz)',
-            lb: 'Pound (lb)',
-            ton: 'Ton (ton)',
-            c: 'Celsius (°C)',
-            f: 'Fahrenheit (°F)',
-            k: 'Kelvin (K)'
+    // Unit Converter Functionality
+    function initConverter() {
+        if (!document.getElementById('converterValue')) return;
+
+        const converterValue = document.getElementById('converterValue');
+        const converterFrom = document.getElementById('converterFrom');
+        const converterTo = document.getElementById('converterTo');
+        const converterResult = document.getElementById('converterResult');
+        const categoryBtns = document.querySelectorAll('.converter-categories .category-btn');
+
+        const conversionRates = {
+            length: {
+                cm: 1,
+                m: 100,
+                km: 100000,
+                in: 2.54,
+                ft: 30.48,
+                mi: 160934
+            },
+            weight: {
+                g: 1,
+                kg: 1000,
+                oz: 28.35,
+                lb: 453.592,
+                ton: 1000000
+            },
+            temperature: {
+                c: { formula: (v, to) => to === 'f' ? (v * 9/5) + 32 : v + 273.15 },
+                f: { formula: (v, to) => to === 'c' ? (v - 32) * 5/9 : (v - 32) * 5/9 + 273.15 },
+                k: { formula: (v, to) => to === 'c' ? v - 273.15 : (v - 273.15) * 9/5 + 32 }
+            }
         };
-        return names[unit] || unit;
-    }
 
-    function convert() {
-        const value = parseFloat(converterValue.value);
-        if (isNaN(value)) {
-            converterResult.value = '';
-            return;
-        }
+        let currentCategory = 'length';
 
-        const from = converterFrom.value;
-        const to = converterTo.value;
-
-        if (currentCategory === 'temperature') {
-            const result = conversionRates.temperature[from].formula(value, to);
-            converterResult.value = result.toFixed(2);
-        } else {
-            const rateFrom = conversionRates[currentCategory][from];
-            const rateTo = conversionRates[currentCategory][to];
-            const result = (value * rateFrom) / rateTo;
-            converterResult.value = result.toFixed(6);
-        }
-    }
-
-    
-    converterValue.addEventListener('input', convert);
-    converterFrom.addEventListener('change', convert);
-    converterTo.addEventListener('change', convert);
-
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            categoryBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            currentCategory = this.dataset.category;
-            updateUnits();
-        });
-    });
-
-    
-    updateUnits();
-}
-
-    if (document.getElementById('imageUpload')) {
-    const uploadInput = document.getElementById('imageUpload');
-    const uploadArea = document.querySelector('.upload-area');
-    const previewImage = document.getElementById('previewImage');
-    const colorGrid = document.getElementById('colorGrid');
-    const selectedColorDisplay = document.getElementById('selectedColor');
-    const colorBox = document.getElementById('colorBox');
-    const colorValue = document.getElementById('colorValue');
-    const copyBtn = document.getElementById('copyBtn');
-    
-    let selectedColor = null;
-    let colorPalette = [];
-    
-    // Handle image upload
-    uploadInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        if (!file.type.match('image.*')) {
-            alert('Please select an image file');
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            previewImage.src = event.target.result;
-            previewImage.style.display = 'block';
-            uploadArea.style.display = 'none';
+        function updateUnits() {
+            const units = Object.keys(conversionRates[currentCategory]);
+            const fromValue = converterFrom.value;
+            const toValue = converterTo.value;
             
-            // Process image for color extraction
-            previewImage.onload = function() {
-                extractColorsFromImage(previewImage);
+            converterFrom.innerHTML = units.map(unit => 
+                `<option value="${unit}">${getUnitName(unit)}</option>`
+            ).join('');
+            
+            converterTo.innerHTML = units.map(unit => 
+                `<option value="${unit}">${getUnitName(unit)}</option>`
+            ).join('');
+            
+            if (units.includes(fromValue)) converterFrom.value = fromValue;
+            if (units.includes(toValue)) converterTo.value = toValue;
+            
+            convert();
+        }
+
+        function getUnitName(unit) {
+            const names = {
+                cm: 'Centimeter (cm)',
+                m: 'Meter (m)',
+                km: 'Kilometer (km)',
+                in: 'Inch (in)',
+                ft: 'Feet (ft)',
+                mi: 'Mile (mi)',
+                g: 'Gram (g)',
+                kg: 'Kilogram (kg)',
+                oz: 'Ounce (oz)',
+                lb: 'Pound (lb)',
+                ton: 'Ton (ton)',
+                c: 'Celsius (°C)',
+                f: 'Fahrenheit (°F)',
+                k: 'Kelvin (K)'
             };
-        };
-        reader.readAsDataURL(file);
-    });
-    
-    // Drag and drop functionality
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', function() {
-        uploadArea.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-        uploadInput.files = e.dataTransfer.files;
-        uploadInput.dispatchEvent(new Event('change'));
-    });
-    
-    // Extract colors from image
-    function extractColorsFromImage(img) {
-        colorGrid.innerHTML = '';
-        colorPalette = [];
-        
-        // Create canvas to process image
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        // Sample pixels from the image
-        const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        const colorCount = {};
-        
-        // Analyze pixels and count color occurrences
-        for (let i = 0; i < pixelData.length; i += 4) {
-            const r = pixelData[i];
-            const g = pixelData[i + 1];
-            const b = pixelData[i + 2];
-            const a = pixelData[i + 3];
-            
-            // Skip transparent pixels
-            if (a < 128) continue;
-            
-            const hex = rgbToHex(r, g, b);
-            
-            // Group similar colors
-            const similarColor = findSimilarColor(hex, colorCount);
-            if (similarColor) {
-                colorCount[similarColor]++;
+            return names[unit] || unit;
+        }
+
+        function convert() {
+            const value = parseFloat(converterValue.value);
+            if (isNaN(value)) {
+                converterResult.value = '';
+                return;
+            }
+
+            const from = converterFrom.value;
+            const to = converterTo.value;
+
+            if (currentCategory === 'temperature') {
+                const result = conversionRates.temperature[from].formula(value, to);
+                converterResult.value = result.toFixed(2);
             } else {
-                colorCount[hex] = 1;
+                const rateFrom = conversionRates[currentCategory][from];
+                const rateTo = conversionRates[currentCategory][to];
+                const result = (value * rateFrom) / rateTo;
+                converterResult.value = result.toFixed(6);
             }
         }
+
+        converterValue.addEventListener('input', convert);
+        converterFrom.addEventListener('change', convert);
+        converterTo.addEventListener('change', convert);
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                updateUnits();
+            });
+        });
+
+        updateUnits();
+    }
+
+    // Color Picker Functionality
+    function initColorPicker() {
+        if (!document.getElementById('imageUpload')) return;
+
+        const uploadInput = document.getElementById('imageUpload');
+        const uploadArea = document.querySelector('.upload-area');
+        const previewImage = document.getElementById('previewImage');
+        const colorGrid = document.getElementById('colorGrid');
+        const colorBox = document.getElementById('colorBox');
+        const colorValue = document.getElementById('colorValue');
+        const copyBtn = document.getElementById('copyBtn');
         
-        // Sort colors by frequency and get top 12
-        const sortedColors = Object.entries(colorCount)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 12)
-            .map(item => item[0]);
+        let selectedColor = null;
+        let colorPalette = [];
         
-        // Display color palette
-        sortedColors.forEach((color, index) => {
-            const colorItem = document.createElement('div');
-            colorItem.className = 'color-item';
-            colorItem.style.backgroundColor = color;
-            colorItem.title = color;
-            colorItem.dataset.color = color;
+        uploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
             
-            colorItem.addEventListener('click', function() {
-                selectColor(color);
+            if (!file.type.match('image.*')) {
+                alert('Silakan pilih file gambar');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                previewImage.src = event.target.result;
+                previewImage.style.display = 'block';
+                uploadArea.style.display = 'none';
+                
+                previewImage.onload = function() {
+                    extractColorsFromImage(previewImage);
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function() {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            uploadInput.files = e.dataTransfer.files;
+            uploadInput.dispatchEvent(new Event('change'));
+        });
+        
+        function extractColorsFromImage(img) {
+            colorGrid.innerHTML = '';
+            colorPalette = [];
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            
+            const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            const colorCount = {};
+            
+            for (let i = 0; i < pixelData.length; i += 4) {
+                const r = pixelData[i];
+                const g = pixelData[i + 1];
+                const b = pixelData[i + 2];
+                const a = pixelData[i + 3];
+                
+                if (a < 128) continue;
+                
+                const hex = rgbToHex(r, g, b);
+                const similarColor = findSimilarColor(hex, colorCount);
+                if (similarColor) {
+                    colorCount[similarColor]++;
+                } else {
+                    colorCount[hex] = 1;
+                }
+            }
+            
+            const sortedColors = Object.entries(colorCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 12)
+                .map(item => item[0]);
+            
+            sortedColors.forEach((color, index) => {
+                const colorItem = document.createElement('div');
+                colorItem.className = 'color-item';
+                colorItem.style.backgroundColor = color;
+                colorItem.title = color;
+                colorItem.dataset.color = color;
+                
+                colorItem.addEventListener('click', function() {
+                    selectColor(color);
+                });
+                
+                colorGrid.appendChild(colorItem);
+                colorPalette.push(color);
             });
             
-            colorGrid.appendChild(colorItem);
-            colorPalette.push(color);
-        });
-        
-        // Select the first color by default
-        if (colorPalette.length > 0) {
-            selectColor(colorPalette[0]);
-        }
-    }
-    
-    // Select a color from the palette
-    function selectColor(color) {
-        selectedColor = color;
-        colorBox.style.backgroundColor = color;
-        colorValue.textContent = color;
-        
-        // Highlight selected color in grid
-        document.querySelectorAll('.color-item').forEach(item => {
-            item.classList.toggle('selected', item.dataset.color === color);
-        });
-    }
-    
-    // Copy color to clipboard
-    copyBtn.addEventListener('click', function() {
-        if (!selectedColor) return;
-        
-        navigator.clipboard.writeText(selectedColor).then(() => {
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => {
-                copyBtn.textContent = 'Copy Color';
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy:', err);
-        });
-    });
-    
-    // Helper functions
-    function rgbToHex(r, g, b) {
-        return '#' + [r, g, b].map(x => {
-            const hex = x.toString(16);
-            return hex.length === 1 ? '0' + hex : hex;
-        }).join('');
-    }
-    
-    function findSimilarColor(hex, colorCount) {
-        const threshold = 30; // Color similarity threshold
-        const [r1, g1, b1] = hexToRgb(hex);
-        
-        for (const color in colorCount) {
-            const [r2, g2, b2] = hexToRgb(color);
-            const diff = Math.sqrt(
-                Math.pow(r1 - r2, 2) + 
-                Math.pow(g1 - g2, 2) + 
-                Math.pow(b1 - b2, 2)
-            );
-            
-            if (diff < threshold) {
-                return color;
+            if (colorPalette.length > 0) {
+                selectColor(colorPalette[0]);
             }
         }
-        return null;
+        
+        function selectColor(color) {
+            selectedColor = color;
+            colorBox.style.backgroundColor = color;
+            colorValue.textContent = color;
+            
+            document.querySelectorAll('.color-item').forEach(item => {
+                item.classList.toggle('selected', item.dataset.color === color);
+            });
+        }
+        
+        copyBtn.addEventListener('click', function() {
+            if (!selectedColor) return;
+            
+            navigator.clipboard.writeText(selectedColor).then(() => {
+                copyBtn.textContent = 'Tersalin!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Salin Warna';
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin:', err);
+            });
+        });
+        
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+        
+        function findSimilarColor(hex, colorCount) {
+            const threshold = 30;
+            const [r1, g1, b1] = hexToRgb(hex);
+            
+            for (const color in colorCount) {
+                const [r2, g2, b2] = hexToRgb(color);
+                const diff = Math.sqrt(
+                    Math.pow(r1 - r2, 2) + 
+                    Math.pow(g1 - g2, 2) + 
+                    Math.pow(b1 - b2, 2)
+                );
+                
+                if (diff < threshold) {
+                    return color;
+                }
+            }
+            return null;
+        }
+        
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return [r, g, b];
+        }
     }
-    
-    function hexToRgb(hex) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return [r, g, b];
-    }
-});
 
-    
-    if (document.getElementById('danaPayment')) {
+    // Dana Payment Functionality
+    function initDanaPayment() {
+        if (!document.getElementById('danaPayment')) return;
+
         const danaPayment = document.getElementById('danaPayment');
         const danaDetails = document.getElementById('danaDetails');
         const copyDana = document.getElementById('copyDana');
@@ -529,14 +525,12 @@ if (document.getElementById('converterValue')) {
         
         danaPayment.addEventListener('click', () => {
             danaDetails.style.display = 'block';
-           
             danaDetails.scrollIntoView({ behavior: 'smooth' });
         });
         
         copyDana.addEventListener('click', () => {
             danaNumber.select();
             document.execCommand('copy');
-            
             
             const originalText = copyDana.innerHTML;
             copyDana.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
@@ -547,353 +541,355 @@ if (document.getElementById('converterValue')) {
         });
     }
 
-    
-    if (document.querySelector('.category-btn')) {
-        
+    // Tool Navigation Functionality
+    function initToolNavigation() {
+        if (!document.querySelector('.category-btn')) return;
+
         const categoryBtns = document.querySelectorAll('.category-btn');
         const toolCards = document.querySelectorAll('.tool-card');
+        const toolBtns = document.querySelectorAll('.tool-btn');
+        const toolContainers = document.querySelectorAll('.tool-container');
+        const backButtons = document.querySelectorAll('.back-button');
         
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                
                 categoryBtns.forEach(b => b.classList.remove('active'));
-                
                 btn.classList.add('active');
                 
                 const category = btn.dataset.category;
                 
-                
                 toolCards.forEach(card => {
-                    if (category === 'all' || card.dataset.category === category) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                    card.style.display = (category === 'all' || card.dataset.category === category) 
+                        ? 'block' 
+                        : 'none';
                 });
             });
         });
-        
-        
-        const toolBtns = document.querySelectorAll('.tool-btn');
-        const toolContainers = document.querySelectorAll('.tool-container');
-        const backButtons = document.querySelectorAll('.back-button');
         
         toolBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const tool = btn.dataset.tool;
                 
-                
                 toolContainers.forEach(container => {
                     container.style.display = 'none';
                 });
                 
-                
-                document.getElementById(`${tool}Tool`).style.display = 'block';
-                
-                
-                document.getElementById('toolContainers').scrollIntoView({ behavior: 'smooth' });
+                const toolContainer = document.getElementById(`${tool}Tool`);
+                if (toolContainer) {
+                    toolContainer.style.display = 'block';
+                    toolContainer.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
         
         backButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                
                 toolContainers.forEach(container => {
                     container.style.display = 'none';
                 });
                 
-                
-                document.querySelector('.tools-list').scrollIntoView({ behavior: 'smooth' });
+                const toolsList = document.querySelector('.tools-list');
+                if (toolsList) {
+                    toolsList.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
-        
-        
-        if (document.getElementById('generatePassword')) {
-            const generateBtn = document.getElementById('generatePassword');
-            const passwordField = document.getElementById('generatedPassword');
-            const copyBtn = document.getElementById('copyPassword');
-            const lengthSlider = document.getElementById('passwordLength');
-            const lengthValue = document.getElementById('lengthValue');
-            const uppercase = document.getElementById('uppercase');
-            const lowercase = document.getElementById('lowercase');
-            const numbers = document.getElementById('numbers');
-            const symbols = document.getElementById('symbols');
-            const strengthBar = document.getElementById('strengthBar');
-            const strengthText = document.getElementById('strengthText');
-            
-            
-            lengthSlider.addEventListener('input', () => {
-                lengthValue.textContent = lengthSlider.value;
-            });
-            
-            
-            generateBtn.addEventListener('click', generatePassword);
-            
-            
-            copyBtn.addEventListener('click', () => {
-                passwordField.select();
-                document.execCommand('copy');
-                
-                
-                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                }, 2000);
-            });
-            
-            function generatePassword() {
-                const length = lengthSlider.value;
-                const hasUpper = uppercase.checked;
-                const hasLower = lowercase.checked;
-                const hasNumber = numbers.checked;
-                const hasSymbol = symbols.checked;
-                
-                let chars = '';
-                if (hasUpper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                if (hasLower) chars += 'abcdefghijklmnopqrstuvwxyz';
-                if (hasNumber) chars += '0123456789';
-                if (hasSymbol) chars += '!@#$%^&*()_+~`|}{[]\:;?><,./-=';
-                
-                if (chars === '') {
-                    passwordField.value = 'Pilih setidaknya satu opsi';
-                    return;
-                }
-                
-                let password = '';
-                for (let i = 0; i < length; i++) {
-                    const randomIndex = Math.floor(Math.random() * chars.length);
-                    password += chars[randomIndex];
-                }
-                
-                passwordField.value = password;
-                updateStrength(password);
-            }
-            
-            function updateStrength(password) {
-               
-                let strength = 0;
-                
-                
-                strength += Math.min(50, (password.length / 32) * 50);
-                
-                
-                const variety = [];
-                if (password.match(/[A-Z]/)) variety.push('upper');
-                if (password.match(/[a-z]/)) variety.push('lower');
-                if (password.match(/[0-9]/)) variety.push('number');
-                if (password.match(/[^A-Za-z0-9]/)) variety.push('symbol');
-                
-                strength += (variety.length / 4) * 50;
-                
-                
-                strengthBar.style.width = `${strength}%`;
-                
-                if (strength < 30) {
-                    strengthBar.style.backgroundColor = '#e74c3c';
-                    strengthText.textContent = 'Lemah';
-                } else if (strength < 70) {
-                    strengthBar.style.backgroundColor = '#f39c12';
-                    strengthText.textContent = 'Sedang';
-                } else {
-                    strengthBar.style.backgroundColor = '#2ecc71';
-                    strengthText.textContent = 'Kuat';
-                }
-            }
-            
-            
-            generatePassword();
-        }
-        
-        
-        if (document.getElementById('fetchInstagram')) {
-    const fetchBtn = document.getElementById('fetchInstagram');
-    const instagramUrl = document.getElementById('instagramUrl');
-    const resultContainer = document.getElementById('instagramResult');
-    const previewImg = document.getElementById('instagramPreview');
-    const downloadBtns = document.querySelectorAll('.download-btn');
-    const loadingSpinner = document.getElementById('instagramLoading');
-    const errorMessage = document.getElementById('instagramError');
-
-    fetchBtn.addEventListener('click', async () => {
-        const url = instagramUrl.value.trim();
-        
-        if (!url.includes('instagram.com')) {
-            showError('URL Instagram tidak valid');
-            return;
-        }
-
-        try {
-            loadingSpinner.style.display = 'block';
-            errorMessage.style.display = 'none';
-            resultContainer.style.display = 'none';
-
-            const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
-            const response = await fetch(apiUrl);
-            
-            if (!response.ok) throw new Error('Gagal mengambil data');
-            
-            const data = await response.json();
-            
-            if (data.error) throw new Error(data.message || 'Konten tidak ditemukan');
-            
-            // Tampilkan preview
-            previewImg.src = data.image || data.thumbnail || data.url;
-            
-            // Set download links
-            downloadBtns.forEach(btn => {
-                const type = btn.dataset.type;
-                btn.onclick = () => {
-                    const downloadUrl = type === 'video' ? 
-                        (data.video || data.url) : 
-                        (data.image || data.url);
-                    
-                    if (!downloadUrl) {
-                        alert('Tipe konten ini tidak tersedia');
-                        return;
-                    }
-                    
-                    window.open(downloadUrl, '_blank');
-                };
-            });
-            
-            resultContainer.style.display = 'block';
-        } catch (error) {
-            showError(error.message);
-        } finally {
-            loadingSpinner.style.display = 'none';
-        }
-    });
-
-    function showError(message) {
-        errorMessage.style.display = 'flex';
-        document.getElementById('errorText').textContent = message;
     }
-}
+
+    // Password Generator Functionality
+    function initPasswordGenerator() {
+        if (!document.getElementById('generatePassword')) return;
+
+        const generateBtn = document.getElementById('generatePassword');
+        const passwordField = document.getElementById('generatedPassword');
+        const copyBtn = document.getElementById('copyPassword');
+        const lengthSlider = document.getElementById('passwordLength');
+        const lengthValue = document.getElementById('lengthValue');
+        const uppercase = document.getElementById('uppercase');
+        const lowercase = document.getElementById('lowercase');
+        const numbers = document.getElementById('numbers');
+        const symbols = document.getElementById('symbols');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
         
-        // Click Game Tool
-        if (document.getElementById('startGameBtn')) {
-            const startGameBtn = document.getElementById('startGameBtn');
-            const gameArea = document.getElementById('clickGameArea');
-            const gameScore = document.getElementById('gameScore');
-            const gameTime = document.getElementById('gameTime');
-            const clickSound = document.getElementById('clickSound');
-            const explosionSound = document.getElementById('explosionSound');
-            const successSound = document.getElementById('successSound');
+        lengthSlider.addEventListener('input', () => {
+            lengthValue.textContent = lengthSlider.value;
+        });
+        
+        generateBtn.addEventListener('click', generatePassword);
+        
+        copyBtn.addEventListener('click', () => {
+            passwordField.select();
+            document.execCommand('copy');
             
-            let score = 0;
-            let timeLeft = 60;
-            let gameInterval;
-            let timer;
-            let gameRunning = false;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
             
-            startGameBtn.addEventListener('click', startClickGame);
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            }, 2000);
+        });
+        
+        function generatePassword() {
+            const length = lengthSlider.value;
+            const hasUpper = uppercase.checked;
+            const hasLower = lowercase.checked;
+            const hasNumber = numbers.checked;
+            const hasSymbol = symbols.checked;
             
-            function startClickGame() {
-                if (gameRunning) return;
-                
-                gameRunning = true;
-                score = 0;
-                timeLeft = 60;
-                gameScore.textContent = score;
-                gameTime.textContent = timeLeft;
-                gameArea.innerHTML = '';
-                startGameBtn.disabled = true;
-                
-                // Start timer
-                timer = setInterval(() => {
-                    timeLeft--;
-                    gameTime.textContent = timeLeft;
-                    
-                    if (timeLeft <= 0) {
-                        endGame();
-                    }
-                }, 1000);
-                
-                // Start creating targets
-                gameInterval = setInterval(createClickTarget, 1000);
-                
-                // Create first target immediately
-                createClickTarget();
+            let chars = '';
+            if (hasUpper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (hasLower) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (hasNumber) chars += '0123456789';
+            if (hasSymbol) chars += '!@#$%^&*()_+~`|}{[]\\:;?><,./-=';
+            
+            if (chars === '') {
+                passwordField.value = 'Pilih setidaknya satu opsi';
+                return;
             }
             
-            function createClickTarget() {
-                if (!gameRunning) return;
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                password += chars[randomIndex];
+            }
+            
+            passwordField.value = password;
+            updateStrength(password);
+        }
+        
+        function updateStrength(password) {
+            let strength = 0;
+            
+            strength += Math.min(50, (password.length / 32) * 50);
+            
+            const variety = [];
+            if (password.match(/[A-Z]/)) variety.push('upper');
+            if (password.match(/[a-z]/)) variety.push('lower');
+            if (password.match(/[0-9]/)) variety.push('number');
+            if (password.match(/[^A-Za-z0-9]/)) variety.push('symbol');
+            
+            strength += (variety.length / 4) * 50;
+            
+            strengthBar.style.width = `${strength}%`;
+            
+            if (strength < 30) {
+                strengthBar.style.backgroundColor = '#e74c3c';
+                strengthText.textContent = 'Lemah';
+            } else if (strength < 70) {
+                strengthBar.style.backgroundColor = '#f39c12';
+                strengthText.textContent = 'Sedang';
+            } else {
+                strengthBar.style.backgroundColor = '#2ecc71';
+                strengthText.textContent = 'Kuat';
+            }
+        }
+        
+        generatePassword();
+    }
+
+    // Instagram Downloader Functionality
+    function initInstagramDownloader() {
+        if (!document.getElementById('fetchInstagram')) return;
+
+        const fetchBtn = document.getElementById('fetchInstagram');
+        const instagramUrl = document.getElementById('instagramUrl');
+        const resultContainer = document.getElementById('instagramResult');
+        const loadingSpinner = document.getElementById('instagramLoading');
+        const errorMessage = document.getElementById('instagramError');
+
+        fetchBtn.addEventListener('click', async () => {
+            const url = instagramUrl.value.trim();
+            
+            if (!url.includes('instagram.com')) {
+                showError('URL Instagram tidak valid');
+                return;
+            }
+
+            try {
+                loadingSpinner.style.display = 'block';
+                errorMessage.style.display = 'none';
+                resultContainer.style.display = 'none';
+
+                const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
+                const response = await fetch(apiUrl);
                 
-                const target = document.createElement('div');
-                target.className = 'click-target';
+                if (!response.ok) throw new Error('Gagal mengambil data');
                 
-                // Random position
-                const maxWidth = gameArea.offsetWidth - 60;
-                const maxHeight = gameArea.offsetHeight - 60;
+                const data = await response.json();
                 
-                const randomX = Math.floor(Math.random() * maxWidth);
-                const randomY = Math.floor(Math.random() * maxHeight);
+                if (data.error) throw new Error(data.message || 'Konten tidak ditemukan');
                 
-                target.style.left = `${randomX}px`;
-                target.style.top = `${randomY}px`;
-                
-                // Random color
-                const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                target.style.backgroundColor = randomColor;
-                
-                // Random size
-                const randomSize = 40 + Math.floor(Math.random() * 40);
-                target.style.width = `${randomSize}px`;
-                target.style.height = `${randomSize}px`;
-                
-                // Add points value
-                const points = Math.floor(randomSize / 10);
-                target.textContent = points;
-                
-                // Click event
-                target.addEventListener('click', function() {
-                    clickSound.currentTime = 0;
-                    clickSound.play();
-                    
-                    score += points;
-                    gameScore.textContent = score;
-                    
-                    // Create explosion effect
-                    const explosion = document.createElement('div');
-                    explosion.className = 'explosion';
-                    explosion.style.left = `${randomX - 20}px`;
-                    explosion.style.top = `${randomY - 20}px`;
-                    gameArea.appendChild(explosion);
-                    
-                    explosionSound.currentTime = 0;
-                    explosionSound.play();
-                    
-                    // Remove elements after animation
-                    setTimeout(() => {
-                        explosion.remove();
-                    }, 500);
-                    
-                    target.remove();
+                displayInstagramResult(data);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        });
+
+        function displayInstagramResult(data) {
+            const previewArea = document.getElementById('previewArea');
+            if (!previewArea) return;
+
+            previewArea.innerHTML = '';
+
+            if (data.video) {
+                previewArea.innerHTML = `
+                    <div class="media-container">
+                        <video controls class="media-preview">
+                            <source src="${data.video}" type="video/mp4">
+                            Browser tidak mendukung video
+                        </video>
+                        <button class="download-btn" data-url="${data.video}" data-type="video">
+                            <i class="fas fa-download"></i> Download Video
+                        </button>
+                    </div>
+                `;
+            } else if (data.image) {
+                previewArea.innerHTML = `
+                    <div class="media-container">
+                        <img src="${data.image}" class="media-preview" alt="Preview Instagram">
+                        <button class="download-btn" data-url="${data.image}" data-type="image">
+                            <i class="fas fa-download"></i> Download Gambar
+                        </button>
+                    </div>
+                `;
+            }
+
+            previewArea.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const url = this.dataset.url;
+                    const type = this.dataset.type;
+                    if (url) {
+                        window.open(url, '_blank');
+                    }
                 });
-                
-                gameArea.appendChild(target);
-                
-                // Remove target after 1.5 seconds if not clicked
-                setTimeout(() => {
-                    if (gameArea.contains(target)) {
-                        target.remove();
-                    }
-                }, 1500);
+            });
+
+            resultContainer.style.display = 'block';
+        }
+
+        function showError(message) {
+            errorMessage.style.display = 'flex';
+            const errorText = document.getElementById('errorText');
+            if (errorText) {
+                errorText.textContent = message;
             }
+        }
+    }
+
+    // Click Game Functionality
+    function initClickGame() {
+        if (!document.getElementById('startGameBtn')) return;
+
+        const startGameBtn = document.getElementById('startGameBtn');
+        const gameArea = document.getElementById('clickGameArea');
+        const gameScore = document.getElementById('gameScore');
+        const gameTime = document.getElementById('gameTime');
+        const clickSound = document.getElementById('clickSound');
+        const explosionSound = document.getElementById('explosionSound');
+        const successSound = document.getElementById('successSound');
+        
+        let score = 0;
+        let timeLeft = 60;
+        let gameInterval;
+        let timer;
+        let gameRunning = false;
+        
+        startGameBtn.addEventListener('click', startClickGame);
+        
+        function startClickGame() {
+            if (gameRunning) return;
             
-            function endGame() {
-                gameRunning = false;
-                clearInterval(timer);
-                clearInterval(gameInterval);
-                startGameBtn.disabled = false;
+            gameRunning = true;
+            score = 0;
+            timeLeft = 60;
+            gameScore.textContent = score;
+            gameTime.textContent = timeLeft;
+            gameArea.innerHTML = '';
+            startGameBtn.disabled = true;
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                gameTime.textContent = timeLeft;
                 
-                gameArea.innerHTML = `<h3>Permainan Selesai! Skor Anda: ${score}</h3>`;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+            
+            gameInterval = setInterval(createClickTarget, 1000);
+            createClickTarget();
+        }
+        
+        function createClickTarget() {
+            if (!gameRunning) return;
+            
+            const target = document.createElement('div');
+            target.className = 'click-target';
+            
+            const maxWidth = gameArea.offsetWidth - 60;
+            const maxHeight = gameArea.offsetHeight - 60;
+            
+            const randomX = Math.floor(Math.random() * maxWidth);
+            const randomY = Math.floor(Math.random() * maxHeight);
+            
+            target.style.left = `${randomX}px`;
+            target.style.top = `${randomY}px`;
+            
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            target.style.backgroundColor = randomColor;
+            
+            const randomSize = 40 + Math.floor(Math.random() * 40);
+            target.style.width = `${randomSize}px`;
+            target.style.height = `${randomSize}px`;
+            
+            const points = Math.floor(randomSize / 10);
+            target.textContent = points;
+            
+            target.addEventListener('click', function() {
+                if (!clickSound.paused) clickSound.currentTime = 0;
+                clickSound.play();
                 
-                successSound.currentTime = 0;
-                successSound.play();
-            }
+                score += points;
+                gameScore.textContent = score;
+                
+                const explosion = document.createElement('div');
+                explosion.className = 'explosion';
+                explosion.style.left = `${randomX - 20}px`;
+                explosion.style.top = `${randomY - 20}px`;
+                gameArea.appendChild(explosion);
+                
+                if (!explosionSound.paused) explosionSound.currentTime = 0;
+                explosionSound.play();
+                
+                setTimeout(() => {
+                    explosion.remove();
+                }, 500);
+                
+                target.remove();
+            });
+            
+            gameArea.appendChild(target);
+            
+            setTimeout(() => {
+                if (gameArea.contains(target)) {
+                    target.remove();
+                }
+            }, 1500);
+        }
+        
+        function endGame() {
+            gameRunning = false;
+            clearInterval(timer);
+            clearInterval(gameInterval);
+            startGameBtn.disabled = false;
+            
+            gameArea.innerHTML = `<h3>Permainan Selesai! Skor Anda: ${score}</h3>`;
+            
+            if (!successSound.paused) successSound.currentTime = 0;
+            successSound.play();
         }
     }
 });
