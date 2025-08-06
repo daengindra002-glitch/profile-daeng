@@ -1,48 +1,19 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-AI V.01 - Chat Publik</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/style.css">
-</head>
-<body>
-    <div class="chat-app">
-        <header class="chat-header">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-robot"></i>
-                    <h1>D-AI V.01</h1>
-                </div>
-                <div class="status">
-                    <span class="status-dot online"></span>
-                    <span>Online</span>
-                </div>
-            </div>
-        </header>
-
-        <div class="chat-container">
-            <div class="chat-display" id="chatDisplay">
-                <div class="welcome-message">
-                    <h3>Halo!</h3>
-                    <p>Saya D-AI, asisten AI berbahasa Indonesia</p>
-                </div>
-            </div>
-            
-            <div class="input-area">
-                <button class="help-btn" id="helpButton">
-                    <i class="fas fa-question-circle"></i>
-                </button>
-                <input type="text" id="userInput" placeholder="Ketik pesan Anda..." autocomplete="off">
-                <button class="send-btn" id="sendButton">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
+<div class="conscious-chat">
+    <div class="neural-header">
+        <div class="consciousness-tracker">
+            <span>Neural Activity: </span>
+            <div class="consciousness-indicator" style="--consciousness-level: 0.87"></div>
         </div>
     </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    
+    <div class="message-container" id="messageContainer">
+        <!-- Messages appear here with neural activity -->
+    </div>
+    
+    <form id="chatForm" class="quantum-input">
+        <input type="text" id="userInput" placeholder="Type to stimulate neural activity...">
+        <button type="submit">
+            <i class="fas fa-brain"></i> Transmit
+        </button>
+    </form>
+</div>
