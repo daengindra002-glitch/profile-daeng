@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-AI - Mode Pengembangan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* Tambahan style khusus secure */
+    .ai-panel {
+        background: #1e1e2d;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+    }
+    </style>
+</head>
+<body>
+    <div class="dev-container">
+        <header>
+            <h1><i class="fas fa-brain"></i> RUANG PENGEMBANGAN AI</h1>
+            <p class="warning">Mode Pelatihan - Tidak untuk interaksi manusia</p>
+        </header>
+
+        <div class="ai-training-panel">
+            <div class="ai-panel" id="ai1">
+                <h2>AI-ALPHA <span class="status-badge">Aktif</span></h2>
+                <div class="ai-output" id="ai1Output"></div>
+            </div>
+            
+            <div class="ai-panel" id="ai2">
+                <h2>AI-BETA <span class="status-badge">Aktif</span></h2>
+                <div class="ai-output" id="ai2Output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+    // Inisialisasi mode pengembangan
+    document.addEventListener('DOMContentLoaded', function() {
+        const aiSystem = new DAITrainingSystem();
+        aiSystem.startTrainingSession();
+    });
+    </script>
+</body>
+</html>
