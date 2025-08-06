@@ -1006,6 +1006,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 
+// Panggil fungsi initJsonGenerator di DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    initJsonGenerator();
+});
+
     
 
 });
