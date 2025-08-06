@@ -323,17 +323,27 @@
         </div>
     </div>
 </div> 
-            <div class="tool-container" id="htmlToScriptTool">
-    <div class="container">
-        <h2>HTML to Script Tag Converter</h2>
-        <textarea id="htmlInput" placeholder="Enter HTML..."></textarea>
-        <div class="buttons">
-            <button id="convertBtn" class="cta-button">Convert to Script Tag</button>
-            <button id="copyBtn" class="cta-button">Copy</button>
+            
+            <div class="tool-container" id="htmlToScriptTool" style="display: none;">
+        <div class="container">
+            <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+            <h2>HTML to Script Converter</h2>
+            <div class="converter-box">
+                <textarea id="htmlInput" placeholder="Paste HTML here..."></textarea>
+                <div class="converter-actions">
+                    <button id="convertBtn" class="cta-button">
+                        <i class="fas fa-exchange-alt"></i> Convert
+                    </button>
+                    <button id="copyBtn" class="cta-button">
+                        <i class="far fa-copy"></i> Copy
+                    </button>
+                </div>
+                <pre id="scriptOutput"><!-- Results appear here --></pre>
+            </div>
         </div>
-        <pre id="jsonOutput"></pre>
     </div>
 </div>
+
             
             <div class="tool-container" id="clickgameTool" style="display: none;">
                 <div class="container">
