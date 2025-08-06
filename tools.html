@@ -245,65 +245,45 @@
     </div>
 </div>
 
-            
-
-        <section class="tools-categories animated-section">
-            <div class="container">
-                <div class="category-buttons">
-                    <button class="category-btn active" data-category="all">Semua</button>
-                    <button class="category-btn" data-category="web">Web Tools</button>
-                    <button class="category-btn" data-category="media">Media</button>
-                    <button class="category-btn" data-category="game">Game</button>
-                    <button class="category-btn" data-category="utility">Utility</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="tools-list animated-section">
-            <div class="container">
-                <div class="tools-grid">
                     
-                    <div class="tool-card" data-category="web">
-                        <div class="tool-icon">
-                            <i class="fas fa-palette"></i>
-                        </div>
-                        <h3>Color Picker</h3>
-                        <p>Pilih dan ekstrak warna dari gambar (25 warna)</p>
-                        <button class="cta-button tool-btn" data-tool="color">Buka Tool</button>
-                    </div>
-
                    
-                </div>
+<div class="tool-container" id="colorTool" style="display: none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>Color Picker</h2>
+        <div class="color-picker-tool">
+            <div class="upload-area">
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                <label for="imageUpload" class="upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Gambar</h3>
+                    <p>Seret & lepas gambar atau klik untuk memilih</p>
+                </label>
+                <img id="previewImage" alt="Preview" style="display: none;">
             </div>
-        </section>
-
-        
-        <div class="tool-container" id="colorTool" style="display: none;">
-            <div class="container">
-                <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
-                <h2>Color Picker</h2>
-                <div class="color-picker-tool">
-                    <button id="colorPickerBtn" class="cta-button">
-                        <i class="fas fa-palette"></i> Tampilkan Color Palette
-                    </button>
-                    
-                    <div class="color-grid hidden">
-                        
-                    </div>
-                    
-                    <div class="selected-color">
-                        <div class="color-box-preview" id="selectedColorBox"></div>
-                        <div class="color-info">
-                            <p>Warna Terpilih:</p>
-                            <p id="colorValue">#FFFFFF</p>
-                            <button id="copyColorBtn" class="copy-btn">
-                                <i class="fas fa-copy"></i> Salin Warna
-                            </button>
-                        </div>
+            
+            <button id="extractColorsBtn" class="cta-button" style="display: none;">
+                <i class="fas fa-palette"></i> Ekstrak Warna
+            </button>
+            
+            <div class="color-results" style="display: none;">
+                <h3>Color Palette (25 Warna)</h3>
+                <div id="colorGrid" class="color-grid"></div>
+                
+                <div class="selected-color">
+                    <div class="color-box" id="selectedColorBox"></div>
+                    <div class="color-info">
+                        <p>Warna Terpilih:</p>
+                        <p id="colorValue">#FFFFFF</p>
+                        <button id="copyColorBtn" class="copy-btn">
+                            <i class="fas fa-copy"></i> Salin Warna
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
         <div class="tool-container" id="instagramTool" style="display: none;">
     <div class="container">
