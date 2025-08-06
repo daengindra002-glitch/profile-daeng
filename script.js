@@ -1005,13 +1005,4 @@ document.addEventListener('DOMContentLoaded', function() {
         return text.split('\n').length;
     }
 }
-
-// Panggil fungsi initJsonGenerator di DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function() {
-    initJsonGenerator();
-});
-
-    
-
-});
 });
