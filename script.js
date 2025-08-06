@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initInstagramDownloader();
     initClickGame();
     initJsonGenerator();
+    initHtmlToJsonConverter();
 
    
     function initGame() {
@@ -879,130 +880,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function initJsonGenerator() {
-    if (!document.getElementById('jsonInput')) return;
+    function initHtmlToJsonConverter() {
+    const htmlInput = document.getElementById('htmlInput');
+    const jsonOutput = document.getElementById('jsonResultOutput');
+    const convertBtn = document.getElementById('convertBtn');
 
-    const jsonInput = document.getElementById('jsonInput');
-    const jsonOutput = document.getElementById('jsonOutput');
-    const jsonInfo = document.getElementById('jsonInfo');
-    const generateBtn = document.getElementById('generateJson');
-    const formatBtn = document.getElementById('formatJson');
-    const minifyBtn = document.getElementById('minifyJson');
-    const copyBtn = document.getElementById('copyJson');
-    const clearBtn = document.getElementById('clearJson');
+    convertBtn.addEventListener('click', convertHtmlToJson);
 
-    // Initialize with example
-    jsonInput.value = '{\n  "nama": "John Doe",\n  "umur": 30,\n  "pekerjaan": "Developer",\n  "hobi": ["membaca", "bermain game", "berkebun"],\n  "menikah": false,\n  "alamat": {\n    "jalan": "Jl. Contoh No. 123",\n    "kota": "Jakarta",\n    "kodePos": "12345"\n  }\n}';
-    processJson();
-
-    generateBtn.addEventListener('click', processJson);
-    formatBtn.addEventListener('click', formatJson);
-    minifyBtn.addEventListener('click', minifyJson);
-    copyBtn.addEventListener('click', copyJson);
-    clearBtn.addEventListener('click', clearJson);
-
-    function processJson() {
+    function convertHtmlToJson() {
         try {
-            let input = jsonInput.value.trim();
-            
-            // If input is not already JSON, convert it to JSON
-            if (!input.startsWith('{') && !input.startsWith('[')) {
-                // Try to parse as key-value pairs
-                const lines = input.split('\n').filter(line => line.trim() !== '');
-                const obj = {};
-                
-                lines.forEach(line => {
-                    const separatorIndex = line.indexOf(':');
-                    if (separatorIndex > 0) {
-                        const key = line.substring(0, separatorIndex).trim();
-                        const value = line.substring(separatorIndex + 1).trim();
-                        obj[key] = isNaN(value) ? value : Number(value);
-                    }
-                });
-                
-                input = JSON.stringify(obj, null, 2);
-                jsonInput.value = input;
+            const htmlString = htmlInput.value.trim();
+            if (!htmlString) {
+                jsonOutput.textContent = "Masukkan kode HTML terlebih dahulu";
+                return;
             }
+
+            // Parse HTML to JSON
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            const result = parseNodeToJson(doc.body);
             
-            const jsonObj = JSON.parse(input);
-            const formattedJson = JSON.stringify(jsonObj, null, 2);
-            
-            jsonOutput.innerHTML = syntaxHighlight(formattedJson);
-            jsonInfo.textContent = `Valid JSON - ${formattedJson.length} karakter, ${countLines(formattedJson)} baris`;
-            jsonInfo.style.color = '#2ecc71';
+            jsonOutput.textContent = JSON.stringify(result, null, 2);
         } catch (error) {
             jsonOutput.textContent = `Error: ${error.message}`;
-            jsonInfo.textContent = 'Invalid JSON';
-            jsonInfo.style.color = '#e74c3c';
         }
     }
 
-    function formatJson() {
-        try {
-            const jsonObj = JSON.parse(jsonInput.value);
-            const formattedJson = JSON.stringify(jsonObj, null, 2);
-            jsonInput.value = formattedJson;
-            processJson();
-        } catch (error) {
-            jsonOutput.textContent = `Error: ${error.message}`;
-            jsonInfo.textContent = 'Invalid JSON';
-            jsonInfo.style.color = '#e74c3c';
-        }
-    }
+    function parseNodeToJson(node) {
+        const obj = {
+            tag: node.tagName.toLowerCase(),
+            attributes: {},
+            children: []
+        };
 
-    function minifyJson() {
-        try {
-            const jsonObj = JSON.parse(jsonInput.value);
-            const minifiedJson = JSON.stringify(jsonObj);
-            jsonInput.value = minifiedJson;
-            processJson();
-        } catch (error) {
-            jsonOutput.textContent = `Error: ${error.message}`;
-            jsonInfo.textContent = 'Invalid JSON';
-            jsonInfo.style.color = '#e74c3c';
+        // Get attributes
+        if (node.attributes) {
+            for (let i = 0; i < node.attributes.length; i++) {
+                const attr = node.attributes[i];
+                obj.attributes[attr.name] = attr.value;
+            }
         }
-    }
 
-    function copyJson() {
-        const textToCopy = jsonOutput.textContent;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            copyBtn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
-            setTimeout(() => {
-                copyBtn.innerHTML = '<i class="far fa-copy"></i> Salin JSON';
-            }, 2000);
-        }).catch(err => {
-            console.error('Gagal menyalin teks:', err);
+        // Process child nodes
+        node.childNodes.forEach(child => {
+            if (child.nodeType === Node.ELEMENT_NODE) {
+                obj.children.push(parseNodeToJson(child));
+            } else if (child.nodeType === Node.TEXT_NODE && child.textContent.trim()) {
+                obj.children.push({
+                    text: child.textContent.trim()
+                });
+            }
         });
-    }
 
-    function clearJson() {
-        jsonInput.value = '';
-        jsonOutput.textContent = '';
-        jsonInfo.textContent = '';
-    }
-
-    function syntaxHighlight(json) {
-        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
-            function(match) {
-                let cls = 'json-number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) {
-                        cls = 'json-key';
-                    } else {
-                        cls = 'json-string';
-                    }
-                } else if (/true|false/.test(match)) {
-                    cls = 'json-boolean';
-                } else if (/null/.test(match)) {
-                    cls = 'json-null';
-                }
-                return '<span class="' + cls + '">' + match + '</span>';
-            });
-    }
-
-    function countLines(text) {
-        return text.split('\n').length;
+        return obj;
     }
 }
 });
