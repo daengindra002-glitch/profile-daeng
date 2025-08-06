@@ -204,11 +204,32 @@
     </div>
 </div>
 
-            <div class="tool-card" id="json-generator">
-    <h3>JSON Generator</h3>
-    <textarea id="json-input" placeholder="Masukkan data Anda di sini..." rows="5"></textarea>
-    <button onclick="generateJSON()">Generate JSON</button>
-    <div id="json-output"></div>
+            <div class="tool-container" id="jsonTool" style="display: none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>JSON Generator</h2>
+        <div class="json-generator">
+            <div class="json-controls">
+                <div class="input-group">
+                    <textarea id="jsonInput" placeholder="Masukkan data Anda di sini dalam format JSON atau teks biasa..." rows="10"></textarea>
+                </div>
+                <div class="json-actions">
+                    <button id="generateJson" class="cta-button"><i class="fas fa-cogs"></i> Generate JSON</button>
+                    <button id="formatJson" class="cta-button"><i class="fas fa-align-left"></i> Format JSON</button>
+                    <button id="minifyJson" class="cta-button"><i class="fas fa-compress-alt"></i> Minify JSON</button>
+                    <button id="copyJson" class="cta-button"><i class="far fa-copy"></i> Salin JSON</button>
+                    <button id="clearJson" class="cta-button"><i class="fas fa-trash-alt"></i> Bersihkan</button>
+                </div>
+            </div>
+            <div class="json-result">
+                <div class="result-header">
+                    <h3>Hasil JSON:</h3>
+                    <div class="json-info" id="jsonInfo"></div>
+                </div>
+                <pre id="jsonOutput"></pre>
+            </div>
+        </div>
+    </div>
 </div>
     
             <div class="tool-container" id="converterTool" style="display: none;">
