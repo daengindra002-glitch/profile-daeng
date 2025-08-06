@@ -880,59 +880,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function initHtmlToJsonConverter() {
-    const htmlInput = document.getElementById('htmlInput');
-    const jsonOutput = document.getElementById('jsonResultOutput');
-    const convertBtn = document.getElementById('convertBtn');
+    .jso-controls {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
 
-    convertBtn.addEventListener('click', convertHtmlToJson);
+.control-group {
+    margin-bottom: 15px;
+}
 
-    function convertHtmlToJson() {
-        try {
-            const htmlString = htmlInput.value.trim();
-            if (!htmlString) {
-                jsonOutput.textContent = "Masukkan kode HTML terlebih dahulu";
-                return;
-            }
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
 
-            // Parse HTML to JSON
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlString, 'text/html');
-            const result = parseNodeToJson(doc.body);
-            
-            jsonOutput.textContent = JSON.stringify(result, null, 2);
-        } catch (error) {
-            jsonOutput.textContent = `Error: ${error.message}`;
-        }
-    }
+.control-group input[type="text"],
+.control-group input[type="url"],
+.control-group textarea,
+.control-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
 
-    function parseNodeToJson(node) {
-        const obj = {
-            tag: node.tagName.toLowerCase(),
-            attributes: {},
-            children: []
-        };
+.jso-option {
+    padding: 15px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 5px;
+    margin: 15px 0;
+}
 
-        // Get attributes
-        if (node.attributes) {
-            for (let i = 0; i < node.attributes.length; i++) {
-                const attr = node.attributes[i];
-                obj.attributes[attr.name] = attr.value;
-            }
-        }
+#jsoCode {
+    background: #282c34;
+    color: #abb2bf;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
 
-        // Process child nodes
-        node.childNodes.forEach(child => {
-            if (child.nodeType === Node.ELEMENT_NODE) {
-                obj.children.push(parseNodeToJson(child));
-            } else if (child.nodeType === Node.TEXT_NODE && child.textContent.trim()) {
-                obj.children.push({
-                    text: child.textContent.trim()
-                });
-            }
-        });
-
-        return obj;
-    }
+.preview-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 100px;
 }
 });
