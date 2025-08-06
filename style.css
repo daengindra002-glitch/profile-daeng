@@ -210,22 +210,35 @@ nav ul li a.active::after {
     margin-bottom: 20px;
 }
 
-#htmlInput {
-    width: 100%;
-    min-height: 200px;
-    padding: 15px;
-    border: 1px solid #ddd;
+.converter-box {
+    background-color: var(--card-bg);
+    padding: 20px;
     border-radius: var(--border-radius);
-    font-family: 'Courier New', monospace;
+    box-shadow: var(--shadow);
 }
 
-#jsonResultOutput {
+#htmlInput {
+    width: 100%;
+    min-height: 150px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+}
+
+.converter-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#scriptOutput {
     background-color: #282c34;
     color: #abb2bf;
     padding: 15px;
     border-radius: 5px;
-    overflow-x: auto;
     font-family: 'Courier New', monospace;
+    overflow-x: auto;
 }
 
 .color-picker-tool {
