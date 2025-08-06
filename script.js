@@ -78,8 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initPasswordGenerator();
     initInstagramDownloader();
     initClickGame();
-    initJsonGenerator();
-    initHtmlToJsonConverter();
+    initJsoGenerator();
 
    
     function initGame() {
@@ -879,55 +878,109 @@ document.addEventListener('DOMContentLoaded', function() {
             successSound.play();
         }
     }
+    function initJsoGenerator() {
+    const jsoType = document.getElementById('jsoType');
+    const bannerOptions = document.getElementById('bannerOptions');
+    const iframeOptions = document.getElementById('iframeOptions');
+    const customOptions = document.getElementById('customOptions');
+    const generateBtn = document.getElementById('generateJso');
+    const copyBtn = document.getElementById('copyJso');
+    const jsoCode = document.getElementById('jsoCode');
+    const jsoPreview = document.getElementById('jsoPreview');
 
-    .jso-controls {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
+    // Show/hide options based on type
+    jsoType.addEventListener('change', function() {
+        bannerOptions.style.display = 'none';
+        iframeOptions.style.display = 'none';
+        customOptions.style.display = 'none';
+        
+        if(this.value === 'banner') bannerOptions.style.display = 'block';
+        if(this.value === 'iframe') iframeOptions.style.display = 'block';
+        if(this.value === 'custom') customOptions.style.display = 'block';
+    });
+
+    generateBtn.addEventListener('click', function() {
+        const type = jsoType.value;
+        let code = '';
+        
+        if(type === 'banner') {
+            const text = document.getElementById('bannerText').value;
+            const bgColor = document.getElementById('bannerBg').value;
+            const textColor = document.getElementById('bannerColor').value;
+            
+            code = `(function(){
+    var banner = document.createElement('div');
+    banner.innerHTML = '${text.replace(/'/g, "\\'")}';
+    banner.style.position = 'fixed';
+    banner.style.bottom = '0';
+    banner.style.left = '0';
+    banner.style.right = '0';
+    banner.style.padding = '15px';
+    banner.style.backgroundColor = '${bgColor}';
+    banner.style.color = '${textColor}';
+    banner.style.textAlign = 'center';
+    banner.style.zIndex = '9999';
+    document.body.appendChild(banner);
+})();`;
+            
+            jsoPreview.innerHTML = `
+                <div style="position:relative; padding:15px; background:${bgColor}; color:${textColor}; text-align:center;">
+                    ${text}
+                </div>
+            `;
+        }
+        else if(type === 'iframe') {
+            const url = document.getElementById('iframeUrl').value;
+            code = `(function(){
+    var iframe = document.createElement('iframe');
+    iframe.src = '${url}';
+    iframe.style.position = 'fixed';
+    iframe.style.bottom = '20px';
+    iframe.style.right = '20px';
+    iframe.style.width = '300px';
+    iframe.style.height = '200px';
+    iframe.style.border = 'none';
+    iframe.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
+    iframe.style.zIndex = '9999';
+    document.body.appendChild(iframe);
+})();`;
+            
+            
+            jsoPreview.innerHTML = `
+                <iframe src="${url}" style="width:100%; height:200px; border:none;"></iframe>
+            `;
+        }
+        else if(type === 'custom') {
+            const html = document.getElementById('customHtml').value;
+            code = `(function(){
+    var div = document.createElement('div');
+    div.innerHTML = \`${html}\`;
+    div.style.position = 'fixed';
+    div.style.bottom = '20px';
+    div.style.right = '20px';
+    div.style.zIndex = '9999';
+    document.body.appendChild(div);
+})();`;
+            
+            
+            jsoPreview.innerHTML = html;
+        }
+        
+        jsoCode.textContent = code;
+    });
+
+    copyBtn.addEventListener('click', function() {
+        navigator.clipboard.writeText(jsoCode.textContent)
+            .then(() => {
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy Code';
+                }, 2000);
+            });
+    });
 }
 
-.control-group {
-    margin-bottom: 15px;
-}
-
-.control-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.control-group input[type="text"],
-.control-group input[type="url"],
-.control-group textarea,
-.control-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.jso-option {
-    padding: 15px;
-    background: rgba(0,0,0,0.05);
-    border-radius: 5px;
-    margin: 15px 0;
-}
-
-#jsoCode {
-    background: #282c34;
-    color: #abb2bf;
-    padding: 15px;
-    border-radius: 5px;
-    font-family: 'Courier New', monospace;
-    overflow-x: auto;
-}
-
-.preview-area {
-    border: 2px dashed #ccc;
-    padding: 20px;
-    margin-top: 20px;
-    min-height: 100px;
-}
+document.addEventListener('DOMContentLoaded', function() {
+    initJsoGenerator();
+});
 });
