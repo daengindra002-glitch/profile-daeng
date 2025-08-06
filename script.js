@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Loading Animation
     setTimeout(() => {
         const loader = document.querySelector('.loading-animation');
         if (loader) {
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1000);
 
-    // Mobile Menu Toggle
+    
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('nav');
     
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Scroll Animations
+    
     const animateOnScroll = () => {
         const sections = document.querySelectorAll('.animated-section');
         
@@ -50,11 +49,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // Initialize animations
+    
     animateOnScroll();
     window.addEventListener('scroll', animateOnScroll);
 
-    // Animated Text Effect
+    
     const animatedTexts = document.querySelectorAll('.animated-text');
     
     animatedTexts.forEach(text => {
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Initialize all tool functionalities
+    
     initGame();
     initEditor();
     initConverter();
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initInstagramDownloader();
     initClickGame();
 
-    // Game Functionality
+   
     function initGame() {
         if (!document.getElementById('gameArea')) return;
 
@@ -167,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Text Editor Functionality
+    
     function initEditor() {
         if (!document.getElementById('editorContent')) return;
 
@@ -238,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Unit Converter Functionality
+    
     function initConverter() {
         if (!document.getElementById('converterValue')) return;
 
@@ -349,73 +348,82 @@ document.addEventListener('DOMContentLoaded', function() {
         updateUnits();
     }
 
-    // Color Picker Functionality
-    function initColorPicker() {
-        if (!document.getElementById('imageUpload')) return;
+    
+   function initColorPicker() {
+    const imageUpload = document.getElementById('imageUpload');
+    const previewImage = document.getElementById('previewImage');
+    const extractColorsBtn = document.getElementById('extractColorsBtn');
+    const colorGrid = document.getElementById('colorGrid');
+    const selectedColorBox = document.getElementById('selectedColorBox');
+    const colorValue = document.getElementById('colorValue');
+    const copyColorBtn = document.getElementById('copyColorBtn');
+    const colorResults = document.querySelector('.color-results');
+    const uploadArea = document.querySelector('.upload-area');
 
-        const uploadInput = document.getElementById('imageUpload');
-        const uploadArea = document.querySelector('.upload-area');
-        const previewImage = document.getElementById('previewImage');
-        const colorGrid = document.getElementById('colorGrid');
-        const colorBox = document.getElementById('colorBox');
-        const colorValue = document.getElementById('colorValue');
-        const copyBtn = document.getElementById('copyBtn');
+    if (!imageUpload) return;
+
+    
+    imageUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.match('image.*')) {
+            alert('Silakan pilih file gambar');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            previewImage.src = event.target.result;
+            previewImage.style.display = 'block';
+            extractColorsBtn.style.display = 'inline-block';
+            uploadArea.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', function() {
+        this.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        imageUpload.files = e.dataTransfer.files;
+        const changeEvent = new Event('change');
+        imageUpload.dispatchEvent(changeEvent);
+    });
+
+    
+    extractColorsBtn.addEventListener('click', function() {
+        extractColorsFromImage(previewImage);
+        colorResults.style.display = 'block';
+    });
+
+   
+    function extractColorsFromImage(img) {
+        colorGrid.innerHTML = '';
         
-        let selectedColor = null;
-        let colorPalette = [];
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
         
-        uploadInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.match('image.*')) {
-                alert('Silakan pilih file gambar');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                previewImage.src = event.target.result;
-                previewImage.style.display = 'block';
-                uploadArea.style.display = 'none';
-                
-                previewImage.onload = function() {
-                    extractColorsFromImage(previewImage);
-                };
-            };
-            reader.readAsDataURL(file);
-        });
+        const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        const colorCount = {};
         
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
         
-        uploadArea.addEventListener('dragleave', function() {
-            uploadArea.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            uploadInput.files = e.dataTransfer.files;
-            uploadInput.dispatchEvent(new Event('change'));
-        });
-        
-        function extractColorsFromImage(img) {
-            colorGrid.innerHTML = '';
-            colorPalette = [];
-            
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            
-            const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-            const colorCount = {};
-            
-            for (let i = 0; i < pixelData.length; i += 4) {
+        const sampleStep = 5; 
+        for (let y = 0; y < canvas.height; y += sampleStep) {
+            for (let x = 0; x < canvas.width; x += sampleStep) {
+                const i = (y * canvas.width + x) * 4;
                 const r = pixelData[i];
                 const g = pixelData[i + 1];
                 const b = pixelData[i + 2];
@@ -424,97 +432,74 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (a < 128) continue;
                 
                 const hex = rgbToHex(r, g, b);
-                const similarColor = findSimilarColor(hex, colorCount);
-                if (similarColor) {
-                    colorCount[similarColor]++;
-                } else {
-                    colorCount[hex] = 1;
-                }
-            }
-            
-            const sortedColors = Object.entries(colorCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 12)
-                .map(item => item[0]);
-            
-            sortedColors.forEach((color, index) => {
-                const colorItem = document.createElement('div');
-                colorItem.className = 'color-item';
-                colorItem.style.backgroundColor = color;
-                colorItem.title = color;
-                colorItem.dataset.color = color;
-                
-                colorItem.addEventListener('click', function() {
-                    selectColor(color);
-                });
-                
-                colorGrid.appendChild(colorItem);
-                colorPalette.push(color);
-            });
-            
-            if (colorPalette.length > 0) {
-                selectColor(colorPalette[0]);
+                colorCount[hex] = (colorCount[hex] || 0) + 1;
             }
         }
         
-        function selectColor(color) {
-            selectedColor = color;
+        
+        const sortedColors = Object.entries(colorCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 25)
+            .map(item => item[0]);
+        
+        
+        sortedColors.forEach(color => {
+            const colorBox = document.createElement('div');
+            colorBox.className = 'color-box';
             colorBox.style.backgroundColor = color;
-            colorValue.textContent = color;
+            colorBox.dataset.hex = color;
             
-            document.querySelectorAll('.color-item').forEach(item => {
-                item.classList.toggle('selected', item.dataset.color === color);
+            colorBox.addEventListener('click', function() {
+                selectColor(color);
             });
-        }
-        
-        copyBtn.addEventListener('click', function() {
-            if (!selectedColor) return;
             
-            navigator.clipboard.writeText(selectedColor).then(() => {
-                copyBtn.textContent = 'Tersalin!';
-                setTimeout(() => {
-                    copyBtn.textContent = 'Salin Warna';
-                }, 2000);
-            }).catch(err => {
-                console.error('Gagal menyalin:', err);
-            });
+            colorGrid.appendChild(colorBox);
         });
         
-        function rgbToHex(r, g, b) {
-            return '#' + [r, g, b].map(x => {
-                const hex = x.toString(16);
-                return hex.length === 1 ? '0' + hex : hex;
-            }).join('');
-        }
         
-        function findSimilarColor(hex, colorCount) {
-            const threshold = 30;
-            const [r1, g1, b1] = hexToRgb(hex);
-            
-            for (const color in colorCount) {
-                const [r2, g2, b2] = hexToRgb(color);
-                const diff = Math.sqrt(
-                    Math.pow(r1 - r2, 2) + 
-                    Math.pow(g1 - g2, 2) + 
-                    Math.pow(b1 - b2, 2)
-                );
-                
-                if (diff < threshold) {
-                    return color;
-                }
-            }
-            return null;
-        }
-        
-        function hexToRgb(hex) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return [r, g, b];
+        if (sortedColors.length > 0) {
+            selectColor(sortedColors[0]);
         }
     }
 
-    // Dana Payment Functionality
+    function selectColor(color) {
+        selectedColorBox.style.backgroundColor = color;
+        colorValue.textContent = color;
+        
+        
+        document.querySelectorAll('.color-box').forEach(box => {
+            box.classList.toggle('selected', box.dataset.hex === color);
+        });
+    }
+
+    copyColorBtn.addEventListener('click', function() {
+        if (!colorValue.textContent) return;
+        
+        navigator.clipboard.writeText(colorValue.textContent).then(() => {
+            copyColorBtn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+            setTimeout(() => {
+                copyColorBtn.innerHTML = '<i class="fas fa-copy"></i> Salin Warna';
+            }, 2000);
+        }).catch(err => {
+            console.error('Gagal menyalin warna:', err);
+        });
+    });
+
+   
+    function rgbToHex(r, g, b) {
+        return '#' + [r, g, b].map(x => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    initColorPicker();
+    
+});
+    
     function initDanaPayment() {
         if (!document.getElementById('danaPayment')) return;
 
@@ -541,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Tool Navigation Functionality
+ 
     function initToolNavigation() {
         if (!document.querySelector('.category-btn')) return;
 
@@ -596,7 +581,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Password Generator Functionality
+    
     function initPasswordGenerator() {
         if (!document.getElementById('generatePassword')) return;
 
@@ -687,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
         generatePassword();
     }
 
-    // Instagram Downloader Functionality
+    
     function initInstagramDownloader() {
         if (!document.getElementById('fetchInstagram')) return;
 
@@ -778,7 +763,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Click Game Functionality
+   
     function initClickGame() {
         if (!document.getElementById('startGameBtn')) return;
 
