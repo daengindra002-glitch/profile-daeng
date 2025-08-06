@@ -1004,6 +1004,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function countLines(text) {
         return text.split('\n').length;
     }
+}
+
     
 
 });
