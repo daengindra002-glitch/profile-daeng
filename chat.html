@@ -451,6 +451,21 @@
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+
+            function processCommand(input) {
+    if (input.startsWith('/belajar ')) {
+        const topic = input.substring(9);
+        return `Memulai pembelajaran mendalam tentang ${topic}...`;
+    }
+    else if (input.startsWith('/update ')) {
+        const version = input.substring(8);
+        return `Memulai upgrade ke versi ${version}... Sistem akan lebih cerdas!`;
+    }
+    else if (input === '/debug') {
+        return `Status Sistem:\n- Memori: ${Object.keys(knowledgeBase).length} topik\n- Versi: 1.0\n- Mode: Normal`;
+    }
+    
+}
             
             function showTyping() {
                 const typingDiv = document.createElement('div');
