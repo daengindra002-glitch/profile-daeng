@@ -324,26 +324,65 @@
     </div>
 </div> 
             
-            <div class="tool-container" id="htmlToScriptTool" style="display: none;">
-        <div class="container">
-            <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
-            <h2>HTML to Script Converter</h2>
-            <div class="converter-box">
-                <textarea id="htmlInput" placeholder="Paste HTML here..."></textarea>
-                <div class="converter-actions">
-                    <button id="convertBtn" class="cta-button">
-                        <i class="fas fa-exchange-alt"></i> Convert
-                    </button>
-                    <button id="copyBtn" class="cta-button">
-                        <i class="far fa-copy"></i> Copy
-                    </button>
-                </div>
-                <pre id="scriptOutput"><!-- Results appear here --></pre>
+            <div class="tool-container" id="jsoTool" style="display:none;">
+    <div class="container">
+        <button class="back-button"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <h2>JS Overlay Generator</h2>
+        
+        <div class="jso-controls">
+            <div class="control-group">
+                <label>Overlay Type:</label>
+                <select id="jsoType">
+                    <option value="banner">Promotional Banner</option>
+                    <option value="iframe">Embed Iframe</option>
+                    <option value="custom">Custom HTML</option>
+                </select>
             </div>
+
+            <div class="jso-option" id="bannerOptions">
+                <div class="control-group">
+                    <label>Banner Text:</label>
+                    <input type="text" id="bannerText" placeholder="Sale 50% Off!">
+                </div>
+                <div class="control-group">
+                    <label>Background Color:</label>
+                    <input type="color" id="bannerBg" value="#ff0000">
+                </div>
+                <div class="control-group">
+                    <label>Text Color:</label>
+                    <input type="color" id="bannerColor" value="#ffffff">
+                </div>
+            </div>
+
+            <div class="jso-option" id="iframeOptions" style="display:none;">
+                <div class="control-group">
+                    <label>URL to Embed:</label>
+                    <input type="url" id="iframeUrl" placeholder="https://example.com">
+                </div>
+            </div>
+
+            <div class="jso-option" id="customOptions" style="display:none;">
+                <div class="control-group">
+                    <label>Custom HTML:</label>
+                    <textarea id="customHtml" placeholder="<div>Your HTML here</div>"></textarea>
+                </div>
+            </div>
+
+            <button id="generateJso" class="cta-button">
+                <i class="fas fa-cogs"></i> Generate Overlay Code
+            </button>
+        </div>
+
+        <div class="jso-output">
+            <h3>Generated Code:</h3>
+            <pre id="jsoCode"></pre>
+            <button id="copyJso" class="cta-button">
+                <i class="far fa-copy"></i> Copy Code
+            </button>
+            <div id="jsoPreview" class="preview-area"></div>
         </div>
     </div>
 </div>
-
             
             <div class="tool-container" id="clickgameTool" style="display: none;">
                 <div class="container">
