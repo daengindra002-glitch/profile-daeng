@@ -260,9 +260,13 @@ nav ul li a.active::after {
 }
 
 .json-key { color: #e06c75; }
+
 .json-string { color: #98c379; }
+
 .json-number { color: #d19a66; }
+
 .json-boolean { color: #56b6c2; }
+
 .json-null { color: #56b6c2; }
 
 .color-picker-tool {
