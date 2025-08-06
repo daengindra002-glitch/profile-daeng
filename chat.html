@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-AI V.01 | Chat AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .loading-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-school {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .school-logo {
+            height: 40px;
+            width: auto;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .chat-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 150px);
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .chat-header-text h2 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .chat-header-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+            word-wrap: break-word;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-message {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+        
+        .chat-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        #messageInput {
+            width: 100%;
+            padding: 15px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        #messageInput:focus {
+            border-color: var(--accent);
+        }
+        
+        #sendButton {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #sendButton:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            padding: 12px 18px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+        }
+        
+        .typing-dots {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--gray);
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+        
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        .search-result {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+        }
+        
+        .search-result a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .search-result a:hover {
+            text-decoration: underline;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .action-button {
+            background: var(--light);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-button:hover {
+            background: #e9ecef;
+        }
+        
+        .timestamp {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                height: calc(100vh - 100px);
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 0;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-animation">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-school">
+                    <img src="https://www.smkn1ngabang.sch.id/images/logo_smkn_1_ngabang.png" alt="Logo Sekolah" class="school-logo">
+                    <h1>D-AI V.01</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li><a href="tools.html"><i class="fas fa-tools"></i> Tools</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="chat-container">
+            <div class="chat-header">
+                <img src="https://i.imgur.com/JQ9pRoD.png" alt="D-AI Logo">
+                <div class="chat-header-text">
+                    <h2><i class="fas fa-robot"></i> D-AI V.01</h2>
+                    <p>Asisten AI cerdas berbahasa Indonesia</p>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    Halo! Saya D-AI V.01 (Daeng-AI). Saya adalah asisten AI yang terus belajar dan berkembang. Saya bisa berbahasa Indonesia dengan baik dan memahami berbagai bahasa. Saya juga bisa mencari informasi dari internet untuk Anda. Bagaimana saya bisa membantu Anda hari ini?
+                    <div class="timestamp">Baru saja</div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="messageInput" placeholder="Ketik pesan Anda..." autocomplete="off">
+                </div>
+                <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            const knowledgeBase = {
+                greetings: ["Halo!", "Hai, apa kabar?", "Selamat datang!", "Halo! Ada yang bisa saya bantu?"],
+                farewells: ["Sampai jumpa!", "Selamat tinggal!", "Sampai nanti!", "Sampai bertemu lagi!"],
+                thanks: ["Sama-sama!", "Dengan senang hati!", "Terima kasih kembali!", "Senang bisa membantu!"],
+                identity: [
+                    "Saya D-AI V.01, singkatan dari Daeng-AI versi 0.1. Saya asisten AI yang terus belajar.",
+                    "Nama saya D-AI V.01 (Daeng-AI). Saya AI yang dikembangkan untuk membantu Anda.",
+                    "Saya D-AI V.01, asisten virtual cerdas yang siap membantu Anda kapan saja."
+                ],
+                creator: [
+                    "Saya dikembangkan oleh tim SMKN 1 Ngabang sebagai proyek inovasi digital.",
+                    "Saya dibuat oleh siswa dan guru SMKN 1 Ngabang untuk membantu dalam pembelajaran.",
+                    "Pengembang saya berasal dari SMKN 1 Ngabang yang menciptakan saya untuk berbagai keperluan."
+                ],
+                capabilities: [
+                    "Saya bisa menjawab pertanyaan, mencari informasi, dan membantu berbagai kebutuhan Anda dalam bahasa Indonesia maupun bahasa lainnya.",
+                    "Kemampuan saya termasuk memahami berbagai bahasa, mencari informasi dari internet, dan terus belajar dari interaksi.",
+                    "Saya bisa membantu dengan berbagai topik, menerjemahkan, menjelaskan konsep, dan mencari referensi online."
+                ]
+            };
+            
+            const autonomousResponses = [
+                "Saya mencatat pertanyaan Anda untuk dipelajari lebih lanjut. Bisakah Anda menjelaskan lebih detail?",
+                "Topik yang menarik! Saya akan mengembangkan pemahaman saya tentang ini.",
+                "Pertanyaan bagus! Saya sedang memperluas pengetahuan saya tentang subjek ini.",
+                "Saya menemukan referensi baru tentang topik ini. Mari kita eksplor lebih dalam."
+            ];
+            
+            function getCurrentTime() {
+                const now = new Date();
+                return now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            function hideLoader() {
+                setTimeout(() => {
+                    document.querySelector('.loading-animation').style.opacity = '0';
+                    setTimeout(() => {
+                        document.querySelector('.loading-animation').style.display = 'none';
+                    }, 500);
+                }, 1000);
+            }
+            
+            function addMessage(text, isUser = false, searchResults = null) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+                messageDiv.innerHTML = text;
+                
+                if (searchResults) {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'search-result';
+                    resultDiv.innerHTML = `<strong>Sumber:</strong> ${searchResults}`;
+                    messageDiv.appendChild(resultDiv);
+                }
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'timestamp';
+                timeDiv.textContent = getCurrentTime();
+                messageDiv.appendChild(timeDiv);
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator ai-message';
+                typingDiv.innerHTML = `
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return typingDiv;
+            }
+            
+            function processInput(text) {
+                text = text.toLowerCase().replace(/[^\w\s]/gi, '');
+                
+                if (containsAny(text, ['halo', 'hai', 'hi', 'hello', 'pagi', 'siang', 'malam'])) {
+                    return getRandomResponse(knowledgeBase.greetings);
+                }
+                if (containsAny(text, ['bye', 'dadah', 'sampai', 'selamat tinggal', 'goodbye'])) {
+                    return getRandomResponse(knowledgeBase.farewells);
+                }
+                if (containsAny(text, ['terima kasih', 'makasih', 'thanks', 'thank you'])) {
+                    return getRandomResponse(knowledgeBase.thanks);
+                }
+                if (containsAny(text, ['siapa kamu', 'nama kamu', 'd-ai', 'daeng ai'])) {
+                    return getRandomResponse(knowledgeBase.identity);
+                }
+                if (containsAny(text, ['buat', 'ciptakan', 'pembuat', 'developer'])) {
+                    return getRandomResponse(knowledgeBase.creator);
+                }
+                if (containsAny(text, ['bisa apa', 'kemampuan', 'fitur', 'fungsi'])) {
+                    return getRandomResponse(knowledgeBase.capabilities);
+                }
+                if (containsAny(text, ['cari', 'temukan', 'informasi', 'internet', 'web'])) {
+                    return searchInternet(text);
+                }
+                
+                return generateAutonomousResponse(text);
+            }
+            
+            function containsAny(text, terms) {
+                return terms.some(term => text.includes(term));
+            }
+            
+            function getRandomResponse(options) {
+                return options[Math.floor(Math.random() * options.length)];
+            }
+            
+            function generateAutonomousResponse(text) {
+                if (!knowledgeBase[text]) {
+                    knowledgeBase[text] = autonomousResponses;
+                }
+                
+                const responses = knowledgeBase[text];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            function searchInternet(query) {
+                const searchTerms = query.replace(/(cari|temukan|informasi|internet|web)/gi, '').trim();
+                const engines = [
+                    {
+                        name: "Google",
+                        url: `https://www.google.com/search?q=${encodeURIComponent(searchTerms)}`
+                    },
+                    {
+                        name: "Wikipedia",
+                        url: `https://id.wikipedia.org/wiki/${encodeURIComponent(searchTerms)}`
+                    },
+                    {
+                        name: "DuckDuckGo",
+                        url: `https://duckduckgo.com/?q=${encodeURIComponent(searchTerms)}`
+                    }
+                ];
+                
+                const randomEngine = engines[Math.floor(Math.random() * engines.length)];
+                
+                const resultMessage = `Saya menemukan beberapa hasil tentang "${searchTerms}". Anda bisa mencarinya di <a href="${randomEngine.url}" target="_blank">${randomEngine.name}</a> atau ingin saya jelaskan lebih detail?`;
+                
+                return {
+                    message: resultMessage,
+                    source: `Hasil pencarian dari ${randomEngine.name}`
+                };
+            }
+            
+            function sendMessage() {
+                const text = messageInput.value.trim();
+                if (text === '') return;
+                
+                addMessage(text, true);
+                messageInput.value = '';
+                
+                const typing = showTyping();
+                
+                setTimeout(() => {
+                    chatMessages.removeChild(typing);
+                    
+                    const response = processInput(text);
+                    
+                    if (typeof response === 'object' && response.message) {
+                        addMessage(response.message, false, response.source);
+                    } else {
+                        addMessage(response, false);
+                    }
+                    
+                    if (!knowledgeBase[text.toLowerCase()]) {
+                        knowledgeBase[text.toLowerCase()] = [response];
+                    }
+                }, 1000 + Math.random() * 2000);
+            }
+            
+            hideLoader();
+            
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+    </script>
+</body>
+</html>
