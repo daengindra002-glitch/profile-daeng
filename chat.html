@@ -1,1 +1,73 @@
-dalam perbaikan
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-AI | Chat Cerdas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/chat.css">
+</head>
+<body class="bg-gray-100">
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header bg-gradient-to-r from-purple-600 to-indigo-700">
+            <div class="flex items-center">
+                <div class="ai-avatar bg-white p-2 rounded-full">
+                    <i class="fas fa-robot text-indigo-600 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h2 class="text-white font-bold">D-AI Assistant</h2>
+                    <div class="flex items-center">
+                        <span class="status-dot bg-green-400"></span>
+                        <span class="text-xs text-gray-200 ml-1">Online</span>
+                    </div>
+                </div>
+            </div>
+            <button id="historyBtn" class="text-white hover:text-gray-200 transition">
+                <i class="fas fa-history"></i>
+            </button>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-display" id="chatDisplay">
+            <!-- Messages will appear here -->
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area bg-white">
+            <div class="input-group">
+                <button id="micBtn" class="voice-btn hover:bg-gray-100 transition">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <input type="text" id="userInput" placeholder="Ketik pesan..." autocomplete="off" 
+                    class="flex-1 focus:outline-none px-4">
+                <button id="sendBtn" class="send-btn bg-indigo-600 hover:bg-indigo-700 transition">
+                    <i class="fas fa-paper-plane text-white"></i>
+                </button>
+            </div>
+            <div class="suggestion-bar">
+                <button class="suggestion-btn" data-prompt="Apa itu AI?">AI</button>
+                <button class="suggestion-btn" data-prompt="Berikan contoh kode JavaScript">Koding</button>
+                <button class="suggestion-btn" data-prompt="Jelaskan konsep machine learning">ML</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal hidden">
+        <div class="modal-content bg-white">
+            <div class="modal-header">
+                <h3>Riwayat Percakapan</h3>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/ai-core.js"></script>
+    <script src="assets/js/chat.js"></script>
+</body>
+</html>

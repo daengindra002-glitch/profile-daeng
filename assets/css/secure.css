@@ -1,0 +1,269 @@
+/* Base Styles */
+:root {
+    --dark-bg: #111827;
+    --panel-bg: #1f2937;
+    --highlight: #7c3aed;
+    --accent: #10b981;
+    --text: #f3f4f6;
+    --text-light: #9ca3af;
+    --border: #374151;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Lab Container */
+.dev-lab-container {
+    max-width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* Header */
+.lab-header {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.lab-header h1 {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lab-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.control-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.pulse-animation {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #10b981;
+    animation: pulse 1.5s infinite;
+}
+
+/* AI Panels */
+.ai-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+    height: 60vh;
+}
+
+@media (max-width: 1024px) {
+    .ai-panels {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+}
+
+.ai-panel {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-header {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-header h3 {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    color: white;
+}
+
+.ai-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.ai-console {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.2);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.debate-message {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.ai1-message {
+    color: #8b5cf6;
+}
+
+.ai2-message {
+    color: #3b82f6;
+}
+
+.message-time {
+    color: var(--text-light);
+    margin-right: 0.5rem;
+}
+
+.message-content {
+    white-space: pre-wrap;
+}
+
+/* Knowledge Section */
+.knowledge-section {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.section-title {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.knowledge-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-card {
+    background-color: var(--panel-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.knowledge-log {
+    background-color: var(--panel-bg);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.875rem;
+}
+
+.knowledge-entry {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.log-time {
+    color: var(--text-light);
+    margin-right: 0.5rem;
+}
+
+/* Toast Message */
+.toast-message {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--highlight);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    z-index: 100;
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--highlight);
+    border-radius: 3px;
+}
