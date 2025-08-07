@@ -1,4 +1,3 @@
-// Initialize SQL.js properly
 async function initDatabase() {
     try {
         const SQL = await initSqlJs({
