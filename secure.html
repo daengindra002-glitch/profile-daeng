@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-AI | Development Lab</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/secure.css">
+</head>
+<body class="bg-gray-900">
+    <div class="dev-lab-container">
+        <!-- Header -->
+        <div class="lab-header bg-gray-800">
+            <h1 class="text-white">
+                <i class="fas fa-brain text-purple-400"></i> AI Development Lab
+            </h1>
+            <div class="lab-controls">
+                <button id="speedUpBtn" class="control-btn bg-green-600 hover:bg-green-700">
+                    <i class="fas fa-tachometer-alt"></i> Speed Up
+                </button>
+                <button id="addTopicBtn" class="control-btn bg-blue-600 hover:bg-blue-700">
+                    <i class="fas fa-plus"></i> Add Topic
+                </button>
+                <div class="status-indicator">
+                    <span class="text-green-400">ACTIVE</span>
+                    <div class="pulse-animation"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Panels -->
+        <div class="ai-panels">
+            <!-- AI 1 -->
+            <div class="ai-panel bg-gray-800">
+                <div class="ai-header bg-gray-700">
+                    <h3>AI-ALPHA <span class="badge bg-purple-600">PRIMARY</span></h3>
+                    <div class="ai-stats">
+                        <span class="stat"><i class="fas fa-bolt text-yellow-400"></i> 87%</span>
+                        <span class="stat"><i class="fas fa-memory text-blue-400"></i> 1.2TB</span>
+                    </div>
+                </div>
+                <div class="ai-console" id="ai1Console"></div>
+            </div>
+
+            <!-- AI 2 -->
+            <div class="ai-panel bg-gray-800">
+                <div class="ai-header bg-gray-700">
+                    <h3>AI-BETA <span class="badge bg-indigo-600">SECONDARY</span></h3>
+                    <div class="ai-stats">
+                        <span class="stat"><i class="fas fa-bolt text-yellow-400"></i> 92%</span>
+                        <span class="fas fa-memory text-blue-400"></i> 1.5TB</span>
+                    </div>
+                </div>
+                <div class="ai-console" id="ai2Console"></div>
+            </div>
+        </div>
+
+        <!-- Knowledge Graph -->
+        <div class="knowledge-section bg-gray-800">
+            <h3 class="section-title">
+                <i class="fas fa-project-diagram text-purple-400"></i> Knowledge Graph
+            </h3>
+            <div class="knowledge-metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="conceptCount">1,248</div>
+                    <div class="metric-label">Konsep</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="connectionCount">9,876</div>
+                    <div class="metric-label">Hubungan</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="vocabCount">5,642</div>
+                    <div class="metric-label">Kosakata</div>
+                </div>
+            </div>
+            <div class="knowledge-log" id="knowledgeLog">
+                <!-- Knowledge updates will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/ai-core.js"></script>
+    <script src="assets/js/secure.js"></script>
+</body>
+</html>
